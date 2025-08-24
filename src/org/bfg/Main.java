@@ -17,7 +17,8 @@ public final class Main {
         mainCalled = true;
 
         try {
-            run(args);
+            new MainForm();
+            //run(args);
         } catch (Exception exception) {
             System.err.println(exception.getMessage());
             System.out.println("Usage: [Font name] [Font style] [Font size] [Char count] [Output File]");
