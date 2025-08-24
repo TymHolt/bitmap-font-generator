@@ -1,4 +1,4 @@
-package org.bfg;
+package org.bfg.generate;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

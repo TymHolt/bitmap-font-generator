@@ -52,7 +52,6 @@ public abstract class Form extends JFrame {
         Insets insets = this.getInsets();
         final int totalWidth = insets.left + width + insets.right;
         final int totalHeight = insets.top + height + insets.bottom;
-        System.out.println(insets.top + " " + insets.bottom + " " + insets.left + " " + insets.right);
         this.setSize(totalWidth, totalHeight);
     }
 }
