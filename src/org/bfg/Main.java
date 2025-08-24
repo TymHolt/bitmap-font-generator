@@ -1,5 +1,7 @@
 package org.bfg;
 
+import org.bfg.form.implement.MainForm;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
