@@ -33,6 +33,11 @@ public abstract class LoadingForm extends Form {
                     + padding);
     }
 
+    @Override
+    protected void onUpdate() {
+
+    }
+
     protected void setProgressMax(int max) {
         this.progressBar.setMaximum(max);
     }

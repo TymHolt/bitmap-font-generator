@@ -1,13 +1,11 @@
 package org.bfg.form.implement;
 
 import org.bfg.form.base.InputForm;
-import org.bfg.form.base.LoadingForm;
-import org.bfg.generate.BitmapGenerationService;
+import org.bfg.generate.BitmapGenerationRunnable;
+import org.bfg.util.work.Work;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
 public final class MainForm extends InputForm {
@@ -28,7 +26,7 @@ public final class MainForm extends InputForm {
             new String[] {"Plain", "Bold", "Italic"});
         this.fieldFontSize = this.addNumberInput("Font Size", 10, 1, 100);
         this.buttonPreview = this.addAction("Preview", actionEvent -> {
-
+            System.out.println("Preview");
         });
         this.buttonGenerate = this.addAction("Generate", actionEvent -> {
             final Font font = new Font(
@@ -36,15 +34,21 @@ public final class MainForm extends InputForm {
                 getStyleId((String) this.fieldFontStyle.getSelectedItem()),
                 (Integer) this.fieldFontSize.getValue()
             );
-            BitmapGenerationService service = BitmapGenerationService.create(font);
-            new WorkForm(service);
-            service.start();
+
+            final int charCount = 256;
+            final BitmapGenerationRunnable bitmapGenerationRunnable = new BitmapGenerationRunnable(font, charCount);
+            final Work work = new Work(bitmapGenerationRunnable, charCount);
+
+            new WorkForm(work);
+            work.executeAsync();
+
+            this.update();
         });
     }
 
     @Override
     public void onUpdate() {
-        this.buttonPreview.setEnabled(this.preview != null);
+        SwingUtilities.invokeLater(() -> buttonPreview.setEnabled(this.preview != null));
     }
 
     private static int getStyleId(String name) {
