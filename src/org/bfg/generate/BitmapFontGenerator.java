@@ -44,6 +44,9 @@ public final class BitmapFontGenerator {
             else
                 this.graphics.dispose();
         }
+
+        this.graphics.setColor(Color.BLACK);
+        this.graphics.fillRect(0, 0, width, height);
     }
 
     public void generateNext() {

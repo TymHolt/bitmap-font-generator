@@ -20,15 +20,11 @@ public final class PreviewForm extends JFrame {
     @Override
     public void paint(Graphics graphics) {
         super.paint(graphics);
-
-        if (preview != null) {
-            this.setTitle("Preview");
-            this.setSize(preview.getWidth(), preview.getHeight() + 60);
-        }
     }
 
     public void setPreview(BufferedImage preview) {
         this.preview = preview;
+        this.setSize(preview.getWidth(), preview.getHeight() + 60);
         this.repaint();
     }
 

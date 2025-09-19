@@ -3,6 +3,7 @@ package org.bfg.generate;
 import org.bfg.util.work.Work;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public final class BitmapGenerationRunnable implements Work.TaskIndexedRunnable {
 
@@ -15,5 +16,13 @@ public final class BitmapGenerationRunnable implements Work.TaskIndexedRunnable 
     @Override
     public void run(int taskIndex) {
         this.bitmapFontGenerator.generateNext();
+    }
+
+    public BufferedImage getResult() {
+        return this.bitmapFontGenerator.getImage();
+    }
+
+    public void dispose() {
+        this.bitmapFontGenerator.dispose();
     }
 }
