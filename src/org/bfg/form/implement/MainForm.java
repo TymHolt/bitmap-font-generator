@@ -10,11 +10,10 @@ import java.awt.image.BufferedImage;
 
 public final class MainForm extends InputForm {
 
-    private JTextField fieldFontName = new JTextField();
-    private JComboBox<String> fieldFontStyle = new JComboBox<>(new String[] {"Plain", "Bold", "Italic"});
-    private JSpinner fieldFontSize = new JSpinner(new SpinnerNumberModel(10, 1, 100, 1));
-    private JButton buttonPreview = new JButton("Preview");
-    private JButton buttonGenerate = new JButton("Generate");
+    private JTextField fieldFontName;
+    private JComboBox<String> fieldFontStyle;
+    private JSpinner fieldFontSize;
+    private JButton buttonPreview;
     private BufferedImage preview;
 
     @Override
@@ -26,9 +25,10 @@ public final class MainForm extends InputForm {
             new String[] {"Plain", "Bold", "Italic"});
         this.fieldFontSize = this.addNumberInput("Font Size", 10, 1, 100);
         this.buttonPreview = this.addAction("Preview", actionEvent -> {
-            System.out.println("Preview");
+            final PreviewForm form = new PreviewForm();
+            form.setPreview(this.preview);
         });
-        this.buttonGenerate = this.addAction("Generate", actionEvent -> {
+        this.addAction("Generate", actionEvent -> {
             final Font font = new Font(
                 fieldFontName.getText(),
                 getStyleId((String) this.fieldFontStyle.getSelectedItem()),
@@ -39,15 +39,13 @@ public final class MainForm extends InputForm {
             final BitmapGenerationRunnable bitmapGenerationRunnable = new BitmapGenerationRunnable(font, charCount);
             final Work work = new Work(bitmapGenerationRunnable, charCount);
             work.addWorkFinishListener(() -> {
-                PreviewForm form = new PreviewForm();
-                form.setPreview(bitmapGenerationRunnable.getResult());
+                this.preview = bitmapGenerationRunnable.getResult();
                 bitmapGenerationRunnable.dispose();
+                this.update();
             });
 
             new WorkForm(work);
             work.executeAsync();
-
-            this.update();
         });
     }
 

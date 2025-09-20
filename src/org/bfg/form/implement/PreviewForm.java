@@ -1,37 +1,42 @@
 package org.bfg.form.implement;
 
+import org.bfg.form.base.Form;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public final class PreviewForm extends JFrame {
+public final class PreviewForm extends Form {
 
+    private PreviewComponent previewComponent;
     private BufferedImage preview;
 
-    public PreviewForm() {
-        super("Preview");
-        this.add(new PreviewComponent());
-        this.setSize(300, 300 + 60);
-        this.setResizable(false);
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setVisible(true);
-    }
-
     @Override
-    public void paint(Graphics graphics) {
-        super.paint(graphics);
+    protected void initForm() {
+        this.previewComponent = new PreviewComponent();
+        this.add(this.previewComponent);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     public void setPreview(BufferedImage preview) {
         this.preview = preview;
-        this.setSize(preview.getWidth(), preview.getHeight() + 60);
+        this.previewComponent.setBounds(0, 0, preview.getWidth(),
+            preview.getHeight());
+        this.setContentSize(preview.getWidth(), preview.getHeight());
         this.repaint();
+    }
+
+    @Override
+    protected void onUpdate() {
+
     }
 
     private class PreviewComponent extends JPanel {
 
         @Override
         public void paint(Graphics graphics) {
+            super.paint(graphics);
+
             if (preview != null)
                 graphics.drawImage(preview, 0, 0, null);
             else {
