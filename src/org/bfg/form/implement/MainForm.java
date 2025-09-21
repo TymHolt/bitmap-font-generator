@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public final class MainForm extends InputForm {
 
-    private JTextField fieldFontName;
+    private JComboBox<String> fieldFontName;
     private JComboBox<String> fieldFontStyle;
     private JSpinner fieldFontSize;
     private JButton buttonPreview;
@@ -25,7 +25,8 @@ public final class MainForm extends InputForm {
     protected void initInputs() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        this.fieldFontName = this.addTextInput("Font Name");
+        //this.fieldFontName = this.addTextInput("Font Name");
+        this.fieldFontName = this.addSelectionInput("Font Name", getAllFontNames());
         this.fieldFontStyle = this.addSelectionInput("Font Style",
             new String[] {"Plain", "Bold", "Italic"});
         this.fieldFontSize = this.addNumberInput("Font Size", 10, 1, 100);
@@ -63,7 +64,7 @@ public final class MainForm extends InputForm {
         });
         this.addAction("Generate", actionEvent -> {
             final Font font = new Font(
-                fieldFontName.getText(),
+                (String) this.fieldFontName.getSelectedItem(),
                 getStyleId((String) this.fieldFontStyle.getSelectedItem()),
                 (Integer) this.fieldFontSize.getValue()
             );
@@ -87,6 +88,17 @@ public final class MainForm extends InputForm {
         final boolean previewGenerated = this.preview != null;
         this.buttonPreview.setEnabled(previewGenerated);
         this.buttonExport.setEnabled(previewGenerated);
+    }
+
+    private static String[] getAllFontNames() {
+        final GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        final Font[] fonts = graphicsEnvironment.getAllFonts();
+        final String[] names = new String[fonts.length];
+
+        for (int index = 0; index < fonts.length; index++)
+            names[index] = fonts[index].getFontName();
+
+        return names;
     }
 
     private static int getStyleId(String name) {
