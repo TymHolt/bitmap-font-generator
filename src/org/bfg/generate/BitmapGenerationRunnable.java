@@ -9,13 +9,13 @@ public final class BitmapGenerationRunnable implements Work.TaskIndexedRunnable 
 
     private final BitmapFontGenerator bitmapFontGenerator;
 
-    public BitmapGenerationRunnable(Font font, int charCount) {
+    public BitmapGenerationRunnable(Font font, char charCount) {
         this.bitmapFontGenerator = new BitmapFontGenerator(font, charCount);
     }
 
     @Override
     public void run(int taskIndex) {
-        this.bitmapFontGenerator.generateNext();
+        this.bitmapFontGenerator.generate((char) taskIndex);
     }
 
     public BufferedImage getResult() {

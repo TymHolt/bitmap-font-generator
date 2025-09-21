@@ -69,7 +69,7 @@ public final class MainForm extends InputForm {
                 (Integer) this.fieldFontSize.getValue()
             );
 
-            final int charCount = 256;
+            final char charCount = 256;
             final BitmapGenerationRunnable bitmapGenerationRunnable = new BitmapGenerationRunnable(font, charCount);
             final Work work = new Work(bitmapGenerationRunnable, charCount);
             work.addWorkFinishListener(() -> {

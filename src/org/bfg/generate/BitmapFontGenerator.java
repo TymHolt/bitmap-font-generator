@@ -5,16 +5,14 @@ import java.awt.image.BufferedImage;
 
 public final class BitmapFontGenerator {
 
-    private final int charCount;
-    private int charIndex;
+    private final char charCount;
     private BufferedImage bitmapFont;
     private Graphics2D graphics;
     private FontMetrics metrics;
     private int charWidth, charHeight, charsPerRow;
 
-    public BitmapFontGenerator(Font font, int charCount) {
+    public BitmapFontGenerator(Font font, char charCount) {
         this.charCount = charCount;
-        this.charIndex = 0;
 
         int width = 1, height = 1;
         while (true) {
@@ -29,8 +27,8 @@ public final class BitmapFontGenerator {
             this.charWidth = 1;
             this.charHeight = this.metrics.getMaxAscent() + this.metrics.getMaxDescent();
 
-            for (int charNr = 0; charNr < charCount; charNr++) {
-                int nCharWidth = this.metrics.charWidth((char) charNr);
+            for (char c = 0; c < charCount; c++) {
+                int nCharWidth = this.metrics.charWidth(c);
 
                 if (nCharWidth > this.charWidth)
                     this.charWidth = nCharWidth;
@@ -49,19 +47,27 @@ public final class BitmapFontGenerator {
         this.graphics.fillRect(0, 0, width, height);
     }
 
-    public void generateNext() {
-        if (this.charIndex >= this.charCount)
-            return;
+    public Rectangle generate(char c) {
+        if (c >= this.charCount)
+            return null;
 
-        final int column = this.charIndex % this.charsPerRow;
-        final int x = column * this.charWidth;
-        final int row = this.charIndex / this.charsPerRow;
-        final int y = row * this.charHeight + this.metrics.getMaxAscent();
+        final Rectangle charPosition = getCharPosition(c);
 
         this.graphics.setColor(Color.WHITE);
-        this.graphics.drawString("" + (char) this.charIndex, x, y);
+        this.graphics.drawString(String.valueOf(c), charPosition.x, charPosition.y);
 
-        this.charIndex++;
+        return charPosition;
+    }
+
+    public Rectangle getCharPosition(char c) {
+        final int column = c % this.charsPerRow;
+        final int x = column * this.charWidth;
+        final int row = c / this.charsPerRow;
+        final int y = row * this.charHeight + this.metrics.getMaxAscent();
+        final int width = this.metrics.charWidth(c);
+        final int height = this.metrics.getMaxAscent() + this.metrics.getMaxDescent();
+
+        return new Rectangle(x, y, width, height);
     }
 
     public void dispose() {
