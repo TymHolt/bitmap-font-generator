@@ -2,6 +2,8 @@ package org.bfg;
 
 import org.bfg.form.implement.MainForm;
 
+import javax.swing.*;
+
 public final class Main {
 
     private static boolean mainCalled = false;
@@ -13,9 +15,17 @@ public final class Main {
         mainCalled = true;
 
         try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception exception) {
+            JOptionPane.showMessageDialog(null, exception.getMessage(), "Info",
+                JOptionPane.INFORMATION_MESSAGE);
+        }
+
+        try {
             new MainForm();
         } catch (Exception exception) {
-            System.err.println(exception.getMessage());
+            JOptionPane.showMessageDialog(null, exception.getMessage(), "Error",
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 }
