@@ -2,6 +2,7 @@ package org.bfg.generate;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 
 public final class BitmapFontGenerator {
 
@@ -57,6 +58,14 @@ public final class BitmapFontGenerator {
         this.graphics.drawString(String.valueOf(c), charPosition.x, charPosition.y);
 
         return charPosition;
+    }
+
+    public HashMap<Character, Rectangle> generateAll() {
+        final HashMap<Character, Rectangle> charRectMap = new HashMap<>();
+        for (char c = 0; c < this.charCount; c++)
+            charRectMap.put(c, generate(c));
+
+        return charRectMap;
     }
 
     public Rectangle getCharPosition(char c) {
