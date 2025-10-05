@@ -8,18 +8,26 @@ import java.awt.image.BufferedImage;
 public final class BitmapGenerationRunnable implements Work.TaskIndexedRunnable {
 
     private final BitmapFontGenerator bitmapFontGenerator;
+    private final MetaDataGenerator metaDataGenerator;
 
     public BitmapGenerationRunnable(Font font, char charCount) {
         this.bitmapFontGenerator = new BitmapFontGenerator(font, charCount);
+        this.metaDataGenerator = new MetaDataGenerator();
     }
 
     @Override
     public void run(int taskIndex) {
-        this.bitmapFontGenerator.generate((char) taskIndex);
+        final char c = (char) taskIndex;
+        final Rectangle bounds = this.bitmapFontGenerator.generate(c);
+        this.metaDataGenerator.addData(c, bounds);
     }
 
-    public BufferedImage getResult() {
+    public BufferedImage getResultImage() {
         return this.bitmapFontGenerator.getImage();
+    }
+
+    public MetaDataGenerator getResultMetaData() {
+        return this.metaDataGenerator;
     }
 
     public void dispose() {

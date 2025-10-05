@@ -2,6 +2,7 @@ package org.bfg.form.implement;
 
 import org.bfg.form.base.InputForm;
 import org.bfg.generate.BitmapGenerationRunnable;
+import org.bfg.generate.MetaDataGenerator;
 import org.bfg.util.work.Work;
 
 import javax.imageio.ImageIO;
@@ -20,6 +21,7 @@ public final class MainForm extends InputForm {
     private JButton buttonPreview;
     private JButton buttonExport;
     private BufferedImage preview;
+    private MetaDataGenerator metaData;
 
     @Override
     protected void initInputs() {
@@ -48,10 +50,17 @@ public final class MainForm extends InputForm {
             final int action = fileChooser.showDialog(this, "Export Image");
 
             if (action == JFileChooser.APPROVE_OPTION) {
-                final File file = fileChooser.getSelectedFile();
+                File imageFile = fileChooser.getSelectedFile();
+
+                if (!imageFile.getAbsolutePath().endsWith(".png"))
+                    imageFile = new File(imageFile.getAbsolutePath() + ".png");
+
+                final String metaDataFilePath = changeFileExtension(imageFile.getAbsolutePath(), "txt");
+                final File metaDataFile = new File(metaDataFilePath);
 
                 try {
-                    ImageIO.write(this.preview, "PNG", file);
+                    ImageIO.write(this.preview, "PNG", imageFile);
+                    this.metaData.write(metaDataFile);
                 } catch (IOException exception) {
                     JOptionPane.showMessageDialog(this, exception.getMessage(), "Error",
                         JOptionPane.ERROR_MESSAGE);
@@ -73,7 +82,8 @@ public final class MainForm extends InputForm {
             final BitmapGenerationRunnable bitmapGenerationRunnable = new BitmapGenerationRunnable(font, charCount);
             final Work work = new Work(bitmapGenerationRunnable, charCount);
             work.addWorkFinishListener(() -> {
-                this.preview = bitmapGenerationRunnable.getResult();
+                this.preview = bitmapGenerationRunnable.getResultImage();
+                this.metaData = bitmapGenerationRunnable.getResultMetaData();
                 bitmapGenerationRunnable.dispose();
                 this.update();
             });
@@ -108,5 +118,16 @@ public final class MainForm extends InputForm {
             case "bold" -> Font.BOLD;
             default -> throw new IllegalArgumentException("Style unknown: '" + name + "'");
         };
+    }
+
+    private static String changeFileExtension(String path, String newExtension) {
+        int extensionIndex = path.length() - 1;
+
+        for(; extensionIndex >= 0; extensionIndex--) {
+            if (path.charAt(extensionIndex) == '.')
+                break;
+        }
+
+        return path.substring(0, extensionIndex + 1) + newExtension;
     }
 }
