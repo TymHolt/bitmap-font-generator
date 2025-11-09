@@ -1,0 +1,11 @@
+goal main {
+    rm -rf out
+    mkdir -p out
+    javac -d out $(find src -name "*.java")
+    jar cfe bitmap-font-generator.jar org.bfg.Main -C out .
+}
+
+goal clean {
+    rm -rf out
+    rm -f bitmap-font-generator.jar
+}
