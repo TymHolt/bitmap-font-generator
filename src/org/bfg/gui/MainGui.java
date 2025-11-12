@@ -7,6 +7,8 @@ import java.awt.*;
 
 public final class MainGui extends JFrame {
 
+    private final JTabbedPane tabbedPane;
+
     public MainGui(Context context) {
         super("Bitmap Font Generator");
         setLayout(new BorderLayout());
@@ -32,11 +34,11 @@ public final class MainGui extends JFrame {
 
         // ---------------------------------------
 
-        final JTabbedPane tabbedPane = new JTabbedPane();
+        this.tabbedPane = new JTabbedPane();
         final WelcomeView welcomeTab = new WelcomeView(context);
-        tabbedPane.addTab("Welcome", welcomeTab);
+        openTab("Welcome", welcomeTab);
 
-        add(tabbedPane, BorderLayout.CENTER);
+        add(this.tabbedPane, BorderLayout.CENTER);
 
         // ---------------------------------------
 
@@ -48,5 +50,21 @@ public final class MainGui extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    private void openTab(String title, Component component) {
+        for (int tabIndex = 0; tabIndex < this.tabbedPane.getTabCount(); tabIndex++) {
+            if (this.tabbedPane.getComponentAt(tabIndex) instanceof WelcomeView) {
+                this.tabbedPane.remove(tabIndex);
+                break;
+            }
+        }
+
+        this.tabbedPane.addTab(title, component);
+        this.tabbedPane.setSelectedComponent(component);
+    }
+
+    public void newFileTab(String title) {
+        openTab(title, new FileView());
     }
 }

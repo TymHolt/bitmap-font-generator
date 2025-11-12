@@ -12,6 +12,7 @@ public final class Context {
     }
 
     public void actionNewFile() {
-        new MainForm();
+        //new MainForm();
+        this.gui.newFileTab("New");
     }
 }
