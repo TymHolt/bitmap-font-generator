@@ -1,6 +1,5 @@
 package org.bfg;
 
-import org.bfg.form.implement.MainForm;
 import org.bfg.gui.MainGui;
 
 public final class Context {
