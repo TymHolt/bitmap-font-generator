@@ -1,5 +1,6 @@
 package org.bfg.gui;
 
+import org.bfg.Context;
 import org.bfg.generate.BitmapFontGenerator;
 import org.bfg.gui.custom.ImageView;
 
@@ -9,17 +10,23 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 
 final class FileView extends JPanel {
 
+    private final Context context;
     private final JComboBox<String> nameSelection;
     private final JComboBox<String> styleSelection;
     private final JSpinner sizeSelection;
     private final ImageView imageView;
+    private String lastName;
+    private String lastStyle;
+    private int lastSize;
 
-    FileView() {
+    FileView(Context context) {
         super();
         setLayout(new BorderLayout());
+        this.context = context;
 
         // ---------------------------------------
 
@@ -28,7 +35,6 @@ final class FileView extends JPanel {
 
         this.nameSelection = new JComboBox<>(getAllFontNames());
         nameSelection.addActionListener(actionEvent -> {
-            // TODO This gets called twice
             generateFont();
         });
         topBar.add(nameSelection);
@@ -36,7 +42,6 @@ final class FileView extends JPanel {
         this.styleSelection = new JComboBox<>(
             new String[] {"Plain", "Bold", "Italic"});
         styleSelection.addActionListener(actionEvent -> {
-            // TODO This gets called twice
             generateFont();
         });
         topBar.add(styleSelection);
@@ -54,24 +59,46 @@ final class FileView extends JPanel {
         this.imageView = new ImageView();
         add(this.imageView, BorderLayout.CENTER);
 
+        this.lastName = "";
+        this.lastStyle = "";
+        this.lastSize = 0;
         generateFont();
     }
 
     private void generateFont() {
+        final String name = (String) this.nameSelection.getSelectedItem();
+        final String style = (String) this.styleSelection.getSelectedItem();
+        final int size = (Integer) this.sizeSelection.getValue();
+
+        if (name == null || style == null)
+            return;
+
+        if (name.equals(this.lastName) && style.equals(this.lastStyle) && size == this.lastSize)
+            return;
+
+        this.lastName = name;
+        this.lastStyle = style;
+        this.lastSize = size;
+
         final Font font = new Font(
-            (String) this.nameSelection.getSelectedItem(),
-            getStyleId((String) this.styleSelection.getSelectedItem()),
-            (Integer) this.sizeSelection.getValue()
+            name,
+            getStyleId(style),
+            size
         );
 
         final BitmapFontGenerator bitmapFontGenerator = new BitmapFontGenerator(font, (char) 256);
         bitmapFontGenerator.generateAll();
 
-        this.imageView.setImage(bitmapFontGenerator.getImage());
+        final BufferedImage image = bitmapFontGenerator.getImage();
+        this.imageView.setImage(image);
         bitmapFontGenerator.dispose();
 
         this.imageView.invalidate();
         this.imageView.repaint();
+
+        final int width = image.getWidth();
+        final int height = image.getHeight();
+        this.context.renameCurrentTab(name + " (" + width + "x" + height + ")");
     }
 
     private static String[] getAllFontNames() {

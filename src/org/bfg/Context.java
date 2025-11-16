@@ -11,7 +11,10 @@ public final class Context {
     }
 
     public void actionNewFile() {
-        //new MainForm();
         this.gui.newFileTab("New");
+    }
+
+    public void renameCurrentTab(String title) {
+        this.gui.renameCurrentTab(title);
     }
 }

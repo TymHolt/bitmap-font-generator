@@ -4,14 +4,19 @@ import org.bfg.Context;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 public final class MainGui extends JFrame {
 
+    private final Context context;
     private final JTabbedPane tabbedPane;
 
     public MainGui(Context context) {
         super("Bitmap Font Generator");
         setLayout(new BorderLayout());
+        this.context = context;
+
+        // ---------------------------------------
 
         final JMenuBar menuBar = new JMenuBar();
         final JMenu fileMenu = new JMenu("File");
@@ -65,6 +70,18 @@ public final class MainGui extends JFrame {
     }
 
     public void newFileTab(String title) {
-        openTab(title, new FileView());
+        Objects.requireNonNull(title, "Title is null");
+
+        openTab(title, new FileView(this.context));
+    }
+
+    public void renameCurrentTab(String title) {
+        Objects.requireNonNull(title, "Title is null");
+
+        final int selectedIndex = this.tabbedPane.getSelectedIndex();
+        if (selectedIndex < 0)
+            return;
+
+        this.tabbedPane.setTitleAt(selectedIndex, title);
     }
 }
