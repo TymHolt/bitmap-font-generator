@@ -18,10 +18,12 @@ final class FileView extends JPanel {
     private final JComboBox<String> nameSelection;
     private final JComboBox<String> styleSelection;
     private final JSpinner sizeSelection;
+    private final JSpinner countSelection;
     private final ImageView imageView;
     private String lastName;
     private String lastStyle;
     private int lastSize;
+    private int lastCount;
 
     FileView(Context context) {
         super();
@@ -37,6 +39,7 @@ final class FileView extends JPanel {
         nameSelection.addActionListener(actionEvent -> {
             generateFont();
         });
+        topBar.add(new JLabel(" Font: "));
         topBar.add(nameSelection);
 
         this.styleSelection = new JComboBox<>(
@@ -44,13 +47,22 @@ final class FileView extends JPanel {
         styleSelection.addActionListener(actionEvent -> {
             generateFont();
         });
+        topBar.add(new JLabel(" Style: "));
         topBar.add(styleSelection);
 
         this.sizeSelection = new JSpinner(new SpinnerNumberModel(10, 1, 100, 1));
         sizeSelection.addChangeListener(changeEvent -> {
             generateFont();
         });
+        topBar.add(new JLabel(" Size: "));
         topBar.add(sizeSelection);
+
+        this.countSelection = new JSpinner(new SpinnerNumberModel(256, 1, 1024, 1));
+        countSelection.addChangeListener(changeEvent -> {
+            generateFont();
+        });
+        topBar.add(new JLabel(" Count: "));
+        topBar.add(countSelection);
 
         add(topBar, BorderLayout.PAGE_START);
 
@@ -62,6 +74,7 @@ final class FileView extends JPanel {
         this.lastName = "";
         this.lastStyle = "";
         this.lastSize = 0;
+        this.lastCount = 0;
         generateFont();
     }
 
@@ -69,16 +82,19 @@ final class FileView extends JPanel {
         final String name = (String) this.nameSelection.getSelectedItem();
         final String style = (String) this.styleSelection.getSelectedItem();
         final int size = (Integer) this.sizeSelection.getValue();
+        final int count = (Integer) this.countSelection.getValue();
 
         if (name == null || style == null)
             return;
 
-        if (name.equals(this.lastName) && style.equals(this.lastStyle) && size == this.lastSize)
+        if (name.equals(this.lastName) && style.equals(this.lastStyle) && size == this.lastSize &&
+            count == this.lastCount)
             return;
 
         this.lastName = name;
         this.lastStyle = style;
         this.lastSize = size;
+        this.lastCount = count;
 
         final Font font = new Font(
             name,
@@ -86,7 +102,7 @@ final class FileView extends JPanel {
             size
         );
 
-        final BitmapFontGenerator bitmapFontGenerator = new BitmapFontGenerator(font, (char) 256);
+        final BitmapFontGenerator bitmapFontGenerator = new BitmapFontGenerator(font, (char) count);
         bitmapFontGenerator.generateAll();
 
         final BufferedImage image = bitmapFontGenerator.getImage();
