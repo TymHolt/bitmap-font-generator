@@ -5,11 +5,7 @@ import org.bfg.generate.BitmapFontGenerator;
 import org.bfg.gui.custom.ImageView;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
 final class FileView extends JPanel {

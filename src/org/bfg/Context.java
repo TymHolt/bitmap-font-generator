@@ -17,4 +17,8 @@ public final class Context {
     public void renameCurrentTab(String title) {
         this.gui.renameCurrentTab(title);
     }
+
+    public void closeCurrentTab() {
+        this.gui.closeCurrentTab();
+    }
 }

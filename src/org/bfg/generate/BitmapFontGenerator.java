@@ -7,6 +7,8 @@ import java.util.HashMap;
 public final class BitmapFontGenerator {
 
     private final char charCount;
+    private int leading;
+    private int ascent;
     private BufferedImage bitmapFont;
     private Graphics2D graphics;
     private FontMetrics metrics;
@@ -24,6 +26,8 @@ public final class BitmapFontGenerator {
             this.graphics = this.bitmapFont.createGraphics();
             this.graphics.setFont(font);
             this.metrics = this.graphics.getFontMetrics(font);
+            this.leading = this.metrics.getLeading();
+            this.ascent = this.metrics.getMaxAscent();
 
             this.charWidth = 1;
             this.charHeight = this.metrics.getMaxAscent() + this.metrics.getMaxDescent();
@@ -66,6 +70,14 @@ public final class BitmapFontGenerator {
             charRectMap.put(c, generate(c));
 
         return charRectMap;
+    }
+
+    public int getLeading() {
+        return this.leading;
+    }
+
+    public int getAscent() {
+        return this.ascent;
     }
 
     public Rectangle getCharPosition(char c) {
