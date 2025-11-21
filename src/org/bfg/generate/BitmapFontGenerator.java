@@ -52,43 +52,37 @@ public final class BitmapFontGenerator {
         this.graphics.fillRect(0, 0, width, height);
     }
 
-    public Rectangle generate(char c) {
+    public CharInfo generate(char c) {
         if (c >= this.charCount)
             return null;
 
-        final Rectangle charPosition = getCharPosition(c);
-
+        final CharInfo charInfo = getCharPosition(c);
         this.graphics.setColor(Color.WHITE);
-        this.graphics.drawString(String.valueOf(c), charPosition.x, charPosition.y);
+        this.graphics.drawString(String.valueOf(c), charInfo.x, charInfo.y + charInfo.ascent);
 
-        return charPosition;
+        return charInfo;
     }
 
-    public HashMap<Character, Rectangle> generateAll() {
-        final HashMap<Character, Rectangle> charRectMap = new HashMap<>();
+    public HashMap<Character, CharInfo> generateAll() {
+        final HashMap<Character, CharInfo> charInfoMap = new HashMap<>();
         for (char c = 0; c < this.charCount; c++)
-            charRectMap.put(c, generate(c));
+            charInfoMap.put(c, generate(c));
 
-        return charRectMap;
+        return charInfoMap;
     }
 
     public int getLeading() {
         return this.leading;
     }
 
-    public int getAscent() {
-        return this.ascent;
-    }
-
-    public Rectangle getCharPosition(char c) {
+    public CharInfo getCharPosition(char c) {
         final int column = c % this.charsPerRow;
         final int x = column * this.charWidth;
         final int row = c / this.charsPerRow;
-        final int y = row * this.charHeight + this.metrics.getMaxAscent();
+        final int y = row * this.charHeight;
         final int width = this.metrics.charWidth(c);
-        final int height = this.metrics.getMaxAscent() + this.metrics.getMaxDescent();
 
-        return new Rectangle(x, y, width, height);
+        return new CharInfo(x, y, width, charHeight, this.ascent);
     }
 
     public void dispose() {
