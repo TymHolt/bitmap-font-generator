@@ -14,7 +14,7 @@ public final class BitmapFontGenerator {
     private FontMetrics metrics;
     private int charWidth, charHeight, charsPerRow;
 
-    public BitmapFontGenerator(Font font, char charCount) {
+    public BitmapFontGenerator(Font font, char charCount, boolean antiAliased) {
         this.charCount = charCount;
 
         int width = 1, height = 1;
@@ -25,6 +25,11 @@ public final class BitmapFontGenerator {
             this.bitmapFont = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             this.graphics = this.bitmapFont.createGraphics();
             this.graphics.setFont(font);
+
+            if (antiAliased)
+                this.graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                    RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+
             this.metrics = this.graphics.getFontMetrics(font);
             this.leading = this.metrics.getLeading();
             this.ascent = this.metrics.getMaxAscent();

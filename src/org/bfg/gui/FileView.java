@@ -15,11 +15,14 @@ final class FileView extends JPanel {
     private final JComboBox<String> styleSelection;
     private final JSpinner sizeSelection;
     private final JSpinner countSelection;
+    private final JCheckBox antiAlias;
+
     private final ImageView imageView;
     private String lastName;
     private String lastStyle;
     private int lastSize;
     private int lastCount;
+    private boolean lastAntiAlias;
 
     FileView(Context context) {
         super();
@@ -32,26 +35,26 @@ final class FileView extends JPanel {
         topBar.setLayout(new BoxLayout(topBar, BoxLayout.LINE_AXIS));
 
         this.nameSelection = new JComboBox<>(getAllFontNames());
-        nameSelection.addActionListener(actionEvent -> {
+        this.nameSelection.addActionListener(actionEvent -> {
             generateFont();
         });
         topBar.add(new JLabel(" Font: "));
-        topBar.add(nameSelection);
+        topBar.add(this.nameSelection);
 
         this.styleSelection = new JComboBox<>(
             new String[] {"Plain", "Bold", "Italic"});
-        styleSelection.addActionListener(actionEvent -> {
+        this.styleSelection.addActionListener(actionEvent -> {
             generateFont();
         });
         topBar.add(new JLabel(" Style: "));
-        topBar.add(styleSelection);
+        topBar.add(this.styleSelection);
 
         this.sizeSelection = new JSpinner(new SpinnerNumberModel(10, 1, 100, 1));
-        sizeSelection.addChangeListener(changeEvent -> {
+        this.sizeSelection.addChangeListener(changeEvent -> {
             generateFont();
         });
         topBar.add(new JLabel(" Size: "));
-        topBar.add(sizeSelection);
+        topBar.add(this.sizeSelection);
 
         this.countSelection = new JSpinner(new SpinnerNumberModel(256, 1, 1024, 1));
         countSelection.addChangeListener(changeEvent -> {
@@ -59,6 +62,13 @@ final class FileView extends JPanel {
         });
         topBar.add(new JLabel(" Count: "));
         topBar.add(countSelection);
+
+        this.antiAlias = new JCheckBox();
+        this.antiAlias.addChangeListener(changeEvent -> {
+            generateFont();
+        });
+        topBar.add(new JLabel(" Anti-Alias: "));
+        topBar.add(this.antiAlias);
 
         add(topBar, BorderLayout.PAGE_START);
 
@@ -71,6 +81,7 @@ final class FileView extends JPanel {
         this.lastStyle = "";
         this.lastSize = 0;
         this.lastCount = 0;
+        this.lastAntiAlias = false;
         generateFont();
     }
 
@@ -79,18 +90,20 @@ final class FileView extends JPanel {
         final String style = (String) this.styleSelection.getSelectedItem();
         final int size = (Integer) this.sizeSelection.getValue();
         final int count = (Integer) this.countSelection.getValue();
+        final boolean antiAlias = this.antiAlias.isSelected();
 
         if (name == null || style == null)
             return;
 
         if (name.equals(this.lastName) && style.equals(this.lastStyle) && size == this.lastSize &&
-            count == this.lastCount)
+            count == this.lastCount && antiAlias == this.lastAntiAlias)
             return;
 
         this.lastName = name;
         this.lastStyle = style;
         this.lastSize = size;
         this.lastCount = count;
+        this.lastAntiAlias = antiAlias;
 
         final Font font = new Font(
             name,
@@ -98,7 +111,8 @@ final class FileView extends JPanel {
             size
         );
 
-        final BitmapFontGenerator bitmapFontGenerator = new BitmapFontGenerator(font, (char) count);
+        final BitmapFontGenerator bitmapFontGenerator = new BitmapFontGenerator(font, (char) count,
+            antiAlias);
         bitmapFontGenerator.generateAll();
 
         final BufferedImage image = bitmapFontGenerator.getImage();
