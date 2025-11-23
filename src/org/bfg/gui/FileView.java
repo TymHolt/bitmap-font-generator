@@ -1,8 +1,9 @@
 package org.bfg.gui;
 
 import org.bfg.Context;
+import org.bfg.generate.BitmapFont;
 import org.bfg.generate.BitmapFontGenerator;
-import org.bfg.gui.custom.ImageView;
+import org.bfg.generate.GlyphRange;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +18,7 @@ final class FileView extends JPanel {
     private final JSpinner countSelection;
     private final JCheckBox antiAlias;
 
-    private final ImageView imageView;
+    private final BitmapFontView fontView;
     private String lastName;
     private String lastStyle;
     private int lastSize;
@@ -74,8 +75,8 @@ final class FileView extends JPanel {
 
         // ---------------------------------------
 
-        this.imageView = new ImageView();
-        add(this.imageView, BorderLayout.CENTER);
+        this.fontView = new BitmapFontView();
+        add(this.fontView, BorderLayout.CENTER);
 
         this.lastName = "";
         this.lastStyle = "";
@@ -111,19 +112,13 @@ final class FileView extends JPanel {
             size
         );
 
-        final BitmapFontGenerator bitmapFontGenerator = new BitmapFontGenerator(font, (char) count,
-            antiAlias);
-        bitmapFontGenerator.generateAll();
+        final GlyphRange range = new GlyphRange((char) count);
+        final BitmapFont bitmapFont = BitmapFontGenerator.generate(font, range, antiAlias);
+        this.fontView.setFont(bitmapFont);
 
-        final BufferedImage image = bitmapFontGenerator.getImage();
-        this.imageView.setImage(image);
-        bitmapFontGenerator.dispose();
-
-        this.imageView.invalidate();
-        this.imageView.repaint();
-
-        final int width = image.getWidth();
-        final int height = image.getHeight();
+        final BufferedImage atlasImage = bitmapFont.getAtlasImage();
+        final int width = atlasImage.getWidth();
+        final int height = atlasImage.getHeight();
         this.context.renameCurrentTab(name + " (" + width + "x" + height + ")");
     }
 

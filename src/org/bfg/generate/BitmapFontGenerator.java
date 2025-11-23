@@ -2,99 +2,88 @@ package org.bfg.generate;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
+import java.util.Objects;
 
 public final class BitmapFontGenerator {
 
-    private final char charCount;
-    private int leading;
-    private int ascent;
-    private BufferedImage bitmapFont;
-    private Graphics2D graphics;
-    private FontMetrics metrics;
-    private int charWidth, charHeight, charsPerRow;
+    public static BitmapFont generate(Font font, GlyphRange range, boolean antiAliased) {
+        Objects.requireNonNull(font, "Font is null");
+        Objects.requireNonNull(range, "Range is null");
 
-    public BitmapFontGenerator(Font font, char charCount, boolean antiAliased) {
-        this.charCount = charCount;
+        // Init small atlas here, so the loop can always free resources at the beginning
+        int atlasWidth = 1;
+        int atlasHeight = 1;
+        BufferedImage atlasImage = createAtlasImage(atlasWidth, atlasHeight);
+        Graphics2D atlasGraphics = atlasImage.createGraphics();
+        FontMetrics fontMetrics = atlasGraphics.getFontMetrics();
+        Dimension maxGlyphSize = new Dimension(1, 1);
+        int glyphsPerRow = 0;
 
-        int width = 1, height = 1;
+        // Find atlas size to fit all glyphs (power of 2 for textures)
         while (true) {
-            width = width * 2;
-            height = height * 2;
+            // Free and init resources
+            atlasGraphics.dispose();
+            atlasWidth *= 2;
+            atlasHeight *= 2;
+            atlasImage = createAtlasImage(atlasWidth, atlasHeight);
+            atlasGraphics = atlasImage.createGraphics();
+            atlasGraphics.setFont(font);
+            fontMetrics = atlasGraphics.getFontMetrics();
 
-            this.bitmapFont = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            this.graphics = this.bitmapFont.createGraphics();
-            this.graphics.setFont(font);
+            // Determine max glyph size
+            maxGlyphSize.height = fontMetrics.getMaxAscent() + fontMetrics.getMaxDescent();
+            for (char c = range.lowEnd; c <= range.highEnd; c++)
+                maxGlyphSize.width = Math.max(maxGlyphSize.width, fontMetrics.charWidth(c));
 
-            if (antiAliased)
-                this.graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                    RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+            // Check if atlas fits all glyphs
+            glyphsPerRow = atlasWidth / maxGlyphSize.width;
+            final float requiredRowsFloat = (float) range.getCount() / (float) glyphsPerRow;
+            final int requiredRows = (int) Math.ceil(requiredRowsFloat);
+            final int requiredHeight = requiredRows * maxGlyphSize.height;
 
-            this.metrics = this.graphics.getFontMetrics(font);
-            this.leading = this.metrics.getLeading();
-            this.ascent = this.metrics.getMaxAscent();
-
-            this.charWidth = 1;
-            this.charHeight = this.metrics.getMaxAscent() + this.metrics.getMaxDescent();
-
-            for (char c = 0; c < charCount; c++) {
-                int nCharWidth = this.metrics.charWidth(c);
-
-                if (nCharWidth > this.charWidth)
-                    this.charWidth = nCharWidth;
-            }
-
-            this.charsPerRow = this.bitmapFont.getWidth() / charWidth;
-            final int rows = (int) Math.ceil((float) charCount / (float) this.charsPerRow);
-
-            if (rows * charHeight <= this.bitmapFont.getHeight() && charsPerRow != 0)
+            // Atlas size is enough -> break loop
+            if (requiredHeight < atlasHeight && glyphsPerRow != 0)
                 break;
-            else
-                this.graphics.dispose();
         }
 
-        this.graphics.setColor(Color.BLACK);
-        this.graphics.fillRect(0, 0, width, height);
+        clear(atlasGraphics, atlasWidth, atlasHeight);
+        atlasGraphics.setColor(Color.WHITE);
+        setAntiAliased(atlasGraphics, antiAliased);
+        final GlyphInfo[] glyphInfos = new GlyphInfo[range.getCount()];
+
+        // Render glyphs to atlas
+        for (char c = range.lowEnd; c <= range.highEnd; c++) {
+            final int glyphIndex = c - range.lowEnd;
+            final int column = glyphIndex % glyphsPerRow;
+            final int row = glyphIndex / glyphsPerRow;
+            final int atlasX = column * maxGlyphSize.width;
+            final int atlasY = row * maxGlyphSize.height;
+            final int baseline = fontMetrics.getMaxAscent() + atlasY;
+
+            atlasGraphics.drawString(String.valueOf(c), atlasX, baseline);
+
+            final int glyphWidth = fontMetrics.charWidth(c);
+            final int glyphHeight = maxGlyphSize.height;
+            final GlyphInfo glyphInfo = new GlyphInfo(atlasX, atlasY, glyphWidth, glyphHeight);
+            glyphInfos[glyphIndex] = glyphInfo;
+        }
+
+        atlasGraphics.dispose();
+        return new BitmapFont(atlasImage, glyphInfos, range, fontMetrics.getLeading());
     }
 
-    public CharInfo generate(char c) {
-        if (c >= this.charCount)
-            return null;
-
-        final CharInfo charInfo = getCharPosition(c);
-        this.graphics.setColor(Color.WHITE);
-        this.graphics.drawString(String.valueOf(c), charInfo.x, charInfo.y + charInfo.ascent);
-
-        return charInfo;
+    private static BufferedImage createAtlasImage(int width, int height) {
+        return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     }
 
-    public HashMap<Character, CharInfo> generateAll() {
-        final HashMap<Character, CharInfo> charInfoMap = new HashMap<>();
-        for (char c = 0; c < this.charCount; c++)
-            charInfoMap.put(c, generate(c));
-
-        return charInfoMap;
+    private static void setAntiAliased(Graphics2D graphics, boolean antiAliased) {
+        if (antiAliased)
+            graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
     }
 
-    public int getLeading() {
-        return this.leading;
-    }
-
-    public CharInfo getCharPosition(char c) {
-        final int column = c % this.charsPerRow;
-        final int x = column * this.charWidth;
-        final int row = c / this.charsPerRow;
-        final int y = row * this.charHeight;
-        final int width = this.metrics.charWidth(c);
-
-        return new CharInfo(x, y, width, charHeight, this.ascent);
-    }
-
-    public void dispose() {
-        this.graphics.dispose();
-    }
-
-    public BufferedImage getImage() {
-        return this.bitmapFont;
+    private static void clear(Graphics2D graphics, int width, int height) {
+        graphics.setColor(Color.BLACK);
+        graphics.fillRect(0, 0, width, height);
     }
 }
