@@ -1,13 +1,17 @@
 package org.bfg.gui;
 
 import org.bfg.Context;
+import org.bfg.generate.BitmapFont;
+import org.bfg.generate.MetaDataGenerator;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Objects;
+import java.io.File;
+import java.io.IOException;
 
 public final class MainGui extends JFrame {
 
@@ -32,8 +36,44 @@ public final class MainGui extends JFrame {
 
         final JMenuItem exportItem = new JMenuItem("Export");
         exportItem.addActionListener(actionEvent -> {
-            JOptionPane.showMessageDialog(this, "Export not implemented yet", "Info",
-                JOptionPane.INFORMATION_MESSAGE);
+            final FileView openedTab = getOpenedFontView();
+            if (openedTab == null)
+                return;
+
+            final JFileChooser fileChooser = new JFileChooser();
+            fileChooser.addChoosableFileFilter(new FileFilter() {
+
+                @Override
+                public boolean accept(File file) {
+                    return file.getName().endsWith(".png") || file.isDirectory();
+                }
+
+                @Override
+                public String getDescription() {
+                    return "Image (*.png)";
+                }
+            });
+            fileChooser.setAcceptAllFileFilterUsed(false);
+
+            final int action = fileChooser.showDialog(this, "Export font");
+            if (action != JFileChooser.APPROVE_OPTION)
+                return;
+
+            File imageFile = fileChooser.getSelectedFile();
+            if (!imageFile.getAbsolutePath().endsWith(".png"))
+                imageFile = new File(imageFile.getAbsolutePath() + ".png");
+
+            final String dataFilePath = changeFileExtension(imageFile.getAbsolutePath(), "xml");
+            final File dataFile = new File(dataFilePath);
+
+            try {
+                final BitmapFont font = openedTab.getBitmapFont();
+                ImageIO.write(font.getAtlasImage(), "PNG", imageFile);
+                MetaDataGenerator.exportMetaData(dataFile, font);
+            } catch (IOException exception) {
+                JOptionPane.showMessageDialog(this, exception.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
         });
         fileMenu.add(exportItem);
 
@@ -106,6 +146,14 @@ public final class MainGui extends JFrame {
         this.tabbedPane.remove(selectedIndex);
     }
 
+    private FileView getOpenedFontView() {
+        final Component tab = this.tabbedPane.getSelectedComponent();
+        if (tab instanceof FileView)
+            return (FileView) tab;
+
+        return null;
+    }
+
     private Component createTabComponent(String title) {
         final JPanel tabPanel = new JPanel();
         tabPanel.setLayout(new BoxLayout(tabPanel, BoxLayout.LINE_AXIS));
@@ -158,5 +206,16 @@ public final class MainGui extends JFrame {
         tabPanel.add(closeLabel);
 
         return tabPanel;
+    }
+
+    private static String changeFileExtension(String path, String newExtension) {
+        int extensionIndex = path.length() - 1;
+
+        for(; extensionIndex >= 0; extensionIndex--) {
+            if (path.charAt(extensionIndex) == '.')
+                break;
+        }
+
+        return path.substring(0, extensionIndex + 1) + newExtension;
     }
 }

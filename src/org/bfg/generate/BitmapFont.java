@@ -40,7 +40,8 @@ public final class BitmapFont {
             return null;
 
         final GlyphInfo info = getGlyphInfo(c);
-        return this.atlasImage.getSubimage(info.x, info.y, info.width, info.height);
+        return this.atlasImage.getSubimage(info.x, info.y, Math.max(1, info.width),
+            Math.max(1, info.height));
     }
 
     public int getLeading() {

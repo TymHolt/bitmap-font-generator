@@ -86,6 +86,10 @@ final class FileView extends JPanel {
         generateFont();
     }
 
+    public BitmapFont getBitmapFont() {
+        return this.fontView.getBitmapFont();
+    }
+
     private void generateFont() {
         final String name = (String) this.nameSelection.getSelectedItem();
         final String style = (String) this.styleSelection.getSelectedItem();

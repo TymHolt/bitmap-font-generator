@@ -80,6 +80,10 @@ public final class BitmapFontView extends JPanel {
         repaint();
     }
 
+    public BitmapFont getBitmapFont() {
+        return this.font;
+    }
+
     @Override
     public void paint(Graphics graphics) {
         super.paint(graphics);
