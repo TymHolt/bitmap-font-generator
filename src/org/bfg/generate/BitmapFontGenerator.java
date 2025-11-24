@@ -69,7 +69,8 @@ public final class BitmapFontGenerator {
         }
 
         atlasGraphics.dispose();
-        return new BitmapFont(atlasImage, glyphInfos, range, fontMetrics.getLeading());
+        return new BitmapFont(atlasImage, glyphInfos, range, fontMetrics.getLeading(),
+            maxGlyphSize);
     }
 
     private static BufferedImage createAtlasImage(int width, int height) {

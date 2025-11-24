@@ -75,7 +75,7 @@ final class FileView extends JPanel {
 
         // ---------------------------------------
 
-        this.fontView = new BitmapFontView();
+        this.fontView = new BitmapFontView(this.context);
         add(this.fontView, BorderLayout.CENTER);
 
         this.lastName = "";

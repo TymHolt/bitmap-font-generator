@@ -21,4 +21,8 @@ public final class Context {
     public void closeCurrentTab() {
         this.gui.closeCurrentTab();
     }
+
+    public boolean shouldShowGrid() {
+        return this.gui.shouldShowGrid();
+    }
 }

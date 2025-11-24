@@ -17,6 +17,7 @@ public final class MainGui extends JFrame {
 
     private final Context context;
     private final JTabbedPane tabbedPane;
+    private final JCheckBoxMenuItem showGridItem;
 
     public MainGui(Context context) {
         super("Bitmap Font Generator");
@@ -25,7 +26,18 @@ public final class MainGui extends JFrame {
 
         // ---------------------------------------
 
+        this.tabbedPane = new JTabbedPane();
+        final WelcomeView welcomeTab = new WelcomeView(this.context);
+        openTab("Welcome", welcomeTab);
+
+        add(this.tabbedPane, BorderLayout.CENTER);
+
+        // ---------------------------------------
+
         final JMenuBar menuBar = new JMenuBar();
+
+        // ---------------------------------------
+
         final JMenu fileMenu = new JMenu("File");
 
         final JMenuItem newItem = new JMenuItem("New");
@@ -84,15 +96,25 @@ public final class MainGui extends JFrame {
         fileMenu.add(closeItem);
 
         menuBar.add(fileMenu);
-        add(menuBar, BorderLayout.PAGE_START);
 
         // ---------------------------------------
 
-        this.tabbedPane = new JTabbedPane();
-        final WelcomeView welcomeTab = new WelcomeView(this.context);
-        openTab("Welcome", welcomeTab);
+        final JMenu viewMenu = new JMenu("View");
 
-        add(this.tabbedPane, BorderLayout.CENTER);
+        this.showGridItem = new JCheckBoxMenuItem("Show Grid");
+        this.showGridItem.setState(false);
+        this.showGridItem.addItemListener(itemEvent -> {
+            this.tabbedPane.invalidate();
+            this.tabbedPane.repaint();
+        });
+
+        viewMenu.add(showGridItem);
+
+        menuBar.add(viewMenu);
+
+        // ---------------------------------------
+
+        add(menuBar, BorderLayout.PAGE_START);
 
         // ---------------------------------------
 
@@ -144,6 +166,10 @@ public final class MainGui extends JFrame {
             return;
 
         this.tabbedPane.remove(selectedIndex);
+    }
+
+    public boolean shouldShowGrid() {
+        return this.showGridItem.getState();
     }
 
     private FileView getOpenedFontView() {

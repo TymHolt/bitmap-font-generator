@@ -1,5 +1,6 @@
 package org.bfg.gui;
 
+import org.bfg.Context;
 import org.bfg.generate.BitmapFont;
 import org.bfg.generate.GlyphInfo;
 import org.bfg.generate.GlyphRange;
@@ -13,13 +14,15 @@ import java.util.Objects;
 
 public final class BitmapFontView extends JPanel {
 
+    private final Context context;
     private BitmapFont font;
     private BufferedImage renderImage;
     private Graphics2D renderGraphics;
     private Rectangle renderArea;
     private Rectangle highlightArea;
 
-    public BitmapFontView() {
+    public BitmapFontView(Context context) {
+        this.context = context;
         this.renderImage = null;
         this.renderGraphics = null;
         this.highlightArea = null;
@@ -102,6 +105,18 @@ public final class BitmapFontView extends JPanel {
         if (this.highlightArea != null) {
             invertRenderImageArea(this.highlightArea.x, this.highlightArea.y,
                 this.highlightArea.width, this.highlightArea.height);
+        }
+
+        // Render grid
+        if (this.context.shouldShowGrid() && this.font != null) {
+            final Dimension maxGlyphSize = this.font.getMaxGlyphSize();
+            this.renderGraphics.setColor(Color.RED);
+
+            for (int x = maxGlyphSize.width; x < renderWidth; x += maxGlyphSize.width)
+                this.renderGraphics.drawLine(x, 0, x, renderHeight - 1);
+
+            for (int y = maxGlyphSize.height; y < renderHeight; y += maxGlyphSize.height)
+                this.renderGraphics.drawLine(0, y, renderWidth - 1, y);
         }
 
         // Render to screen
