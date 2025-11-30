@@ -107,26 +107,31 @@ public final class BitmapFontView extends JPanel {
                 this.highlightArea.width, this.highlightArea.height);
         }
 
-        // Render grid
-        if (this.context.shouldShowGrid() && this.font != null) {
-            final Dimension maxGlyphSize = this.font.getMaxGlyphSize();
-            this.renderGraphics.setColor(Color.RED);
-
-            for (int x = maxGlyphSize.width; x < renderWidth; x += maxGlyphSize.width)
-                this.renderGraphics.drawLine(x, 0, x, renderHeight - 1);
-
-            for (int y = maxGlyphSize.height; y < renderHeight; y += maxGlyphSize.height)
-                this.renderGraphics.drawLine(0, y, renderWidth - 1, y);
-        }
-
         // Render to screen
         final int size = Math.min(getWidth(), getHeight());
-        final int x = (getWidth() - size) / 2;
-        final int y = (getHeight() - size) / 2;
-        graphics.drawImage(this.renderImage, x, y, size, size, null);
+        final int xOffset = (getWidth() - size) / 2;
+        final int yOffset = (getHeight() - size) / 2;
+        graphics.drawImage(this.renderImage, xOffset, yOffset, size, size, null);
+
+        if (this.context.shouldShowGrid() && this.font != null) {
+            final Dimension maxGlyphSize = this.font.getMaxGlyphSize();
+            graphics.setColor(Color.RED);
+
+            for (int x = maxGlyphSize.width; x < renderWidth; x += maxGlyphSize.width) {
+                final float normalizedX = (float) x / (float) renderWidth;
+                final int frameX = Math.round(normalizedX * (float) size) + xOffset;
+                graphics.drawLine(frameX, yOffset, frameX, yOffset + size - 1);
+            }
+
+            for (int y = maxGlyphSize.height; y < renderHeight; y += maxGlyphSize.height) {
+                final float normalizedY = (float) y / (float) renderHeight;
+                final int frameY = Math.round(normalizedY * (float) size) + yOffset;
+                graphics.drawLine(xOffset, frameY, xOffset + size - 1, frameY);
+            }
+        }
 
         // Remember where we rendered for handling the mouse input
-        this.renderArea = new Rectangle(x, y, size, size);
+        this.renderArea = new Rectangle(xOffset, yOffset, size, size);
     }
 
     private void invertRenderImageArea(int x, int y, int width, int height) {
