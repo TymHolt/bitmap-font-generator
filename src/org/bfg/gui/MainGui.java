@@ -2,6 +2,7 @@ package org.bfg.gui;
 
 import org.bfg.Context;
 import org.bfg.generate.BitmapFont;
+import org.bfg.generate.Export;
 import org.bfg.generate.MetaDataGenerator;
 
 import javax.imageio.ImageIO;
@@ -71,17 +72,11 @@ public final class MainGui extends JFrame {
             if (action != JFileChooser.APPROVE_OPTION)
                 return;
 
-            File imageFile = fileChooser.getSelectedFile();
-            if (!imageFile.getAbsolutePath().endsWith(".png"))
-                imageFile = new File(imageFile.getAbsolutePath() + ".png");
-
-            final String dataFilePath = changeFileExtension(imageFile.getAbsolutePath(), "xml");
-            final File dataFile = new File(dataFilePath);
+            final File imageFile = fileChooser.getSelectedFile();
+            final BitmapFont bitmapFont = openedTab.getBitmapFont();
 
             try {
-                final BitmapFont font = openedTab.getBitmapFont();
-                ImageIO.write(font.getAtlasImage(), "PNG", imageFile);
-                MetaDataGenerator.exportMetaData(dataFile, font);
+                Export.export(imageFile, bitmapFont);
             } catch (IOException exception) {
                 JOptionPane.showMessageDialog(this, exception.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
@@ -232,16 +227,5 @@ public final class MainGui extends JFrame {
         tabPanel.add(closeLabel);
 
         return tabPanel;
-    }
-
-    private static String changeFileExtension(String path, String newExtension) {
-        int extensionIndex = path.length() - 1;
-
-        for(; extensionIndex >= 0; extensionIndex--) {
-            if (path.charAt(extensionIndex) == '.')
-                break;
-        }
-
-        return path.substring(0, extensionIndex + 1) + newExtension;
     }
 }

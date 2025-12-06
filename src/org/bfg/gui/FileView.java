@@ -3,6 +3,7 @@ package org.bfg.gui;
 import org.bfg.Context;
 import org.bfg.generate.BitmapFont;
 import org.bfg.generate.BitmapFontGenerator;
+import org.bfg.generate.FontStyle;
 import org.bfg.generate.GlyphRange;
 
 import javax.swing.*;
@@ -110,11 +111,7 @@ final class FileView extends JPanel {
         this.lastCount = count;
         this.lastAntiAlias = antiAlias;
 
-        final Font font = new Font(
-            name,
-            getStyleId(style),
-            size
-        );
+        final Font font = new Font(name, FontStyle.getId(style), size);
 
         final GlyphRange range = new GlyphRange((char) count);
         final BitmapFont bitmapFont = BitmapFontGenerator.generate(font, range, antiAlias);
@@ -136,14 +133,5 @@ final class FileView extends JPanel {
             names[index] = fonts[index].getFontName();
 
         return names;
-    }
-
-    private static int getStyleId(String name) {
-        return switch (name.toLowerCase()) {
-            case "plain" -> Font.PLAIN;
-            case "italic" -> Font.ITALIC;
-            case "bold" -> Font.BOLD;
-            default -> throw new IllegalArgumentException("Style unknown: '" + name + "'");
-        };
     }
 }
