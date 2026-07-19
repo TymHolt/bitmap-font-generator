@@ -39,7 +39,7 @@ arguments to run with a GUI or use command line arguments to run the generation 
 
 ### Build
 To build this application yourself, you will need
-[smplmake v0.0.1](https://github.com/TymHolt/smpl-make/releases). Run
+[smplmake v0.1.0](https://github.com/TymHolt/smpl-make/releases). Run
 
 > smplmake
 
