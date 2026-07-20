@@ -36,7 +36,7 @@ public final class BitmapFont {
         if (!this.range.contains(c))
             return null;
 
-        return this.infos[c + this.range.lowEnd];
+        return this.infos[c - this.range.lowEnd];
     }
 
     public BufferedImage extrudeGlyph(char c) {

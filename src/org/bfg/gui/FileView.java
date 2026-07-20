@@ -16,14 +16,16 @@ final class FileView extends JPanel {
     private final JComboBox<String> nameSelection;
     private final JComboBox<String> styleSelection;
     private final JSpinner sizeSelection;
-    private final JSpinner countSelection;
+    private final JSpinner beginSelection;
+    private final JSpinner endSelection;
     private final JCheckBox antiAlias;
 
     private final BitmapFontView fontView;
     private String lastName;
     private String lastStyle;
     private int lastSize;
-    private int lastCount;
+    private int lastBegin;
+    private int lastEnd;
     private boolean lastAntiAlias;
 
     FileView(Context context) {
@@ -58,12 +60,19 @@ final class FileView extends JPanel {
         topBar.add(new JLabel(" Size: "));
         topBar.add(this.sizeSelection);
 
-        this.countSelection = new JSpinner(new SpinnerNumberModel(256, 1, 1024, 1));
-        countSelection.addChangeListener(changeEvent -> {
+        this.beginSelection = new JSpinner(new SpinnerNumberModel(0, 0, Character.MAX_VALUE, 1));
+        beginSelection.addChangeListener(changeEvent -> {
             generateFont();
         });
-        topBar.add(new JLabel(" Count: "));
-        topBar.add(countSelection);
+        topBar.add(new JLabel(" ID-Start: "));
+        topBar.add(beginSelection);
+
+        this.endSelection = new JSpinner(new SpinnerNumberModel(256, 0, Character.MAX_VALUE, 1));
+        endSelection.addChangeListener(changeEvent -> {
+            generateFont();
+        });
+        topBar.add(new JLabel(" ID-End: "));
+        topBar.add(endSelection);
 
         this.antiAlias = new JCheckBox();
         this.antiAlias.addChangeListener(changeEvent -> {
@@ -82,7 +91,8 @@ final class FileView extends JPanel {
         this.lastName = "";
         this.lastStyle = "";
         this.lastSize = 0;
-        this.lastCount = 0;
+        this.lastBegin = 0;
+        this.lastEnd = 0;
         this.lastAntiAlias = false;
         generateFont();
     }
@@ -95,25 +105,27 @@ final class FileView extends JPanel {
         final String name = (String) this.nameSelection.getSelectedItem();
         final String style = (String) this.styleSelection.getSelectedItem();
         final int size = (Integer) this.sizeSelection.getValue();
-        final int count = (Integer) this.countSelection.getValue();
+        final int rangeBegin = (Integer) this.beginSelection.getValue();
+        final int rangeEnd = (Integer) this.endSelection.getValue();
         final boolean antiAlias = this.antiAlias.isSelected();
 
         if (name == null || style == null)
             return;
 
         if (name.equals(this.lastName) && style.equals(this.lastStyle) && size == this.lastSize &&
-            count == this.lastCount && antiAlias == this.lastAntiAlias)
+            rangeBegin == this.lastBegin && rangeEnd == this.lastEnd && antiAlias == this.lastAntiAlias)
             return;
 
         this.lastName = name;
         this.lastStyle = style;
         this.lastSize = size;
-        this.lastCount = count;
+        this.lastBegin = rangeBegin;
+        this.lastEnd = rangeEnd;
         this.lastAntiAlias = antiAlias;
 
         final Font font = new Font(name, FontStyle.getId(style), size);
 
-        final GlyphRange range = new GlyphRange((char) count);
+        final GlyphRange range = new GlyphRange((char) rangeBegin, (char) rangeEnd);
         final BitmapFont bitmapFont = BitmapFontGenerator.generate(font, range, antiAlias);
         this.fontView.setFont(bitmapFont);
 
