@@ -49,7 +49,7 @@ final class FileView extends JPanel {
         this.fontStyle = this.fontProperties.addComboBox("Style", new String[] {"Plain", "Bold", "Italic"});
         this.fontSize = this.fontProperties.addSpinner("Size", 10, 1, 100, 1); // TODO Integer.MAX_VALUE?
         this.rangeBegin = this.fontProperties.addSpinner("Begin ID", 0, 0, Character.MAX_VALUE, 1);
-        this.rangeEnd = this.fontProperties.addSpinner("End ID", 256, 0, Character.MAX_VALUE, 1);
+        this.rangeEnd = this.fontProperties.addSpinner("End ID", 255, 0, Character.MAX_VALUE, 1);
         this.antiAlias = this.fontProperties.addCheckBox("Anti-Alias");
 
         generateFont();
@@ -70,7 +70,7 @@ final class FileView extends JPanel {
         if (name == null || style == null)
             return;
 
-        final Font font = new Font(name, FontStyle.getId(style), size);
+        final Font font = new Font(name, FontStyle.getId(style), size); // TODO FontStyle.newFontWithStyle(...)
 
         final GlyphRange range = new GlyphRange((char) rangeBegin, (char) rangeEnd);
         final BitmapFont bitmapFont = BitmapFontGenerator.generate(font, range, antiAlias);

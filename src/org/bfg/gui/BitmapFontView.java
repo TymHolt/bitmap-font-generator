@@ -23,8 +23,8 @@ public final class BitmapFontView extends JPanel {
 
     public BitmapFontView(Context context) {
         this.context = context;
-        this.renderImage = null;
-        this.renderGraphics = null;
+        this.renderImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        this.renderGraphics = this.renderImage.createGraphics();
         this.highlightArea = null;
         this.renderArea = new Rectangle(0, 0, 0, 0);
 
@@ -159,9 +159,6 @@ public final class BitmapFontView extends JPanel {
     }
 
     private void createRenderImage() {
-        if (this.renderGraphics != null)
-            this.renderGraphics.dispose();
-
         final BufferedImage atlasImage = this.font.getAtlasImage();
         this.renderImage = new BufferedImage(atlasImage.getWidth(), atlasImage.getHeight(),
             BufferedImage.TYPE_INT_RGB);
