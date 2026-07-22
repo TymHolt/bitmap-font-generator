@@ -1,12 +1,30 @@
 package org.bfg.gui.controls;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public final class FontProperties {
 
     private final JComponent componentContainer;
     private final Runnable onChange;
+    private final List<Control> controlList;
+
+    private final Runnable onAction = new Runnable() {
+        @Override
+        public void run() {
+            boolean hasChanged = false;
+            for (Control control : controlList) {
+                control.setHasChanged(false);
+                control.readComponentValue();
+                hasChanged = hasChanged || control.hasChanged();
+            }
+
+            if (hasChanged)
+                onChange.run();
+        }
+    };
 
     public FontProperties(JComponent componentContainer, Runnable onChange) {
         Objects.requireNonNull(componentContainer);
@@ -14,6 +32,8 @@ public final class FontProperties {
 
         Objects.requireNonNull(onChange);
         this.onChange = onChange;
+
+        this.controlList = new ArrayList<>();
     }
 
     private void addLabel(String label) {
@@ -21,105 +41,36 @@ public final class FontProperties {
         this.componentContainer.add(new JLabel(" " + label + ": "));
     }
 
-    private class StringValueMemorizer implements IStringValue {
-
-        private String currentValue = null;
-
-        void updateValue(String newValue) {
-            if (newValue == null)
-                return;
-
-            final boolean hasChanged = !newValue.equals(this.currentValue);
-            this.currentValue = newValue;
-
-            if (hasChanged)
-                checkChanges();
-        }
-
-        @Override
-        public String getValue() {
-            return this.currentValue;
-        }
-    }
-
     public IStringValue addComboBox(String label, String[] values) {
         Objects.requireNonNull(values);
+        final StringComboBoxControl comboBoxControl = new StringComboBoxControl(this.onAction, values);
+        this.controlList.add(comboBoxControl);
 
         addLabel(label);
-
-        final StringValueMemorizer stringValueMemorizer = new StringValueMemorizer();
-        final JComboBox<String> comboBox = new JComboBox<>(values);
-        comboBox.addActionListener(actionEvent -> {
-            stringValueMemorizer.updateValue((String) comboBox.getSelectedItem());
-        });
-
-        this.componentContainer.add(comboBox);
-        return stringValueMemorizer;
+        this.componentContainer.add(comboBoxControl.getComponent());
+        return comboBoxControl;
     }
 
-    private class IntegerValueMemorizer implements IIntegerValue {
+    public IIntegerValue addSpinner(String label, int value, int min, int max, int stepSize) {
+        final IntegerSpinnerControl integerSpinnerControl = new IntegerSpinnerControl(this.onAction,
+                value, min, max, stepSize);
+        this.controlList.add(integerSpinnerControl);
 
-        private int currentValue = 0;
-
-        void updateValue(int newValue) {
-            final boolean hasChanged = newValue != this.currentValue;
-            this.currentValue = newValue;
-
-            if (hasChanged)
-                checkChanges();
-        }
-
-        @Override
-        public int getValue() {
-            return this.currentValue;
-        }
-    }
-
-    public IIntegerValue addSpinner(String label, int initialValue, int minimum, int maximum, int stepSize) {
         addLabel(label);
-
-        final IntegerValueMemorizer integerValueMemorizer = new IntegerValueMemorizer();
-        final JSpinner spinner = new JSpinner(new SpinnerNumberModel(initialValue, minimum, maximum, stepSize));
-        spinner.addChangeListener(changeEvent -> {
-            integerValueMemorizer.updateValue((int) spinner.getValue());
-        });
-
-        this.componentContainer.add(spinner);
-        return integerValueMemorizer;
-    }
-
-    private class BooleanValueMemorizer implements IBooleanValue {
-
-        private boolean currentValue = false;
-
-        void updateValue(boolean newValue) {
-            final boolean hasChanged = newValue != this.currentValue;
-            this.currentValue = newValue;
-
-            if (hasChanged)
-                checkChanges();
-        }
-
-        @Override
-        public boolean getValue() {
-            return this.currentValue;
-        }
+        this.componentContainer.add(integerSpinnerControl.getComponent());
+        return integerSpinnerControl;
     }
 
     public IBooleanValue addCheckBox(String label) {
+        final BooleanCheckBoxControl booleanCheckBoxControl = new BooleanCheckBoxControl(this.onAction);
+        this.controlList.add(booleanCheckBoxControl);
+
         addLabel(label);
-
-        final BooleanValueMemorizer booleanValueMemorizer = new BooleanValueMemorizer();
-        final JCheckBox checkBox = new JCheckBox();
-        checkBox.addChangeListener(changeEvent -> {
-            booleanValueMemorizer.updateValue(checkBox.isSelected());
-        });
-
-        this.componentContainer.add(checkBox);
-        return booleanValueMemorizer;
+        this.componentContainer.add(booleanCheckBoxControl.getComponent());
+        return booleanCheckBoxControl;
     }
 
-    private void checkChanges() {
-        this.onChange.run();
+    public void updateControls() {
+        this.onAction.run();
     }
 }

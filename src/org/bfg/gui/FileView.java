@@ -18,7 +18,6 @@ final class FileView extends JPanel {
 
     private final Context context;
     private final BitmapFontView fontView;
-    private final FontProperties fontProperties;
     private final IStringValue fontName;
     private final IStringValue fontStyle;
     private final IIntegerValue fontSize;
@@ -38,13 +37,14 @@ final class FileView extends JPanel {
         this.fontView = new BitmapFontView(this.context);
         add(this.fontView, BorderLayout.CENTER);
 
-        this.fontProperties = new FontProperties(topBar, () -> generateFont());
-        this.fontName = this.fontProperties.addComboBox("Font", getAllFontNames());
-        this.fontStyle = this.fontProperties.addComboBox("Style", new String[] {"Plain", "Bold", "Italic"});
-        this.fontSize = this.fontProperties.addSpinner("Size", 10, 1, 100, 1); // TODO Integer.MAX_VALUE?
-        this.rangeBegin = this.fontProperties.addSpinner("Begin ID", 0, 0, Character.MAX_VALUE, 1);
-        this.rangeEnd = this.fontProperties.addSpinner("End ID", 255, 0, Character.MAX_VALUE, 1);
-        this.antiAlias = this.fontProperties.addCheckBox("Anti-Alias");
+        final FontProperties fontProperties = new FontProperties(topBar, this::generateFont);
+        this.fontName = fontProperties.addComboBox("Font", getAllFontNames());
+        this.fontStyle = fontProperties.addComboBox("Style", new String[] {"Plain", "Bold", "Italic"});
+        this.fontSize = fontProperties.addSpinner("Size", 10, 1, 100, 1); // TODO Integer.MAX_VALUE?
+        this.rangeBegin = fontProperties.addSpinner("Begin ID", 0, 0, Character.MAX_VALUE, 1);
+        this.rangeEnd = fontProperties.addSpinner("End ID", 255, 0, Character.MAX_VALUE, 1);
+        this.antiAlias = fontProperties.addCheckBox("Anti-Alias");
+        fontProperties.updateControls();
 
         generateFont();
     }
@@ -54,7 +54,6 @@ final class FileView extends JPanel {
     }
 
     private void generateFont() {
-        System.out.println("Generate font");
         final String name = this.fontName.getValue();
         final String style = this.fontStyle.getValue();
         final int size = this.fontSize.getValue();
