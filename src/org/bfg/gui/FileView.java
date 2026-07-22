@@ -38,13 +38,7 @@ final class FileView extends JPanel {
         this.fontView = new BitmapFontView(this.context);
         add(this.fontView, BorderLayout.CENTER);
 
-        this.fontProperties = new FontProperties(topBar, new Runnable() {
-
-            @Override
-            public void run() {
-                // TODO Run onChange
-            }
-        });
+        this.fontProperties = new FontProperties(topBar, () -> generateFont());
         this.fontName = this.fontProperties.addComboBox("Font", getAllFontNames());
         this.fontStyle = this.fontProperties.addComboBox("Style", new String[] {"Plain", "Bold", "Italic"});
         this.fontSize = this.fontProperties.addSpinner("Size", 10, 1, 100, 1); // TODO Integer.MAX_VALUE?
@@ -60,6 +54,7 @@ final class FileView extends JPanel {
     }
 
     private void generateFont() {
+        System.out.println("Generate font");
         final String name = this.fontName.getValue();
         final String style = this.fontStyle.getValue();
         final int size = this.fontSize.getValue();
@@ -70,7 +65,7 @@ final class FileView extends JPanel {
         if (name == null || style == null)
             return;
 
-        final Font font = new Font(name, FontStyle.getId(style), size); // TODO FontStyle.newFontWithStyle(...)
+        final Font font = FontStyle.newFontWithStyle(name, style, size);
 
         final GlyphRange range = new GlyphRange((char) rangeBegin, (char) rangeEnd);
         final BitmapFont bitmapFont = BitmapFontGenerator.generate(font, range, antiAlias);

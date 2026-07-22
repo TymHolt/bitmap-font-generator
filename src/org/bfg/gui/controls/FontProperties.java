@@ -1,10 +1,6 @@
 package org.bfg.gui.controls;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Objects;
 
 public final class FontProperties {
@@ -25,13 +21,11 @@ public final class FontProperties {
         this.componentContainer.add(new JLabel(" " + label + ": "));
     }
 
-    private class StringValueMemorizer implements ActionListener, IStringValue {
+    private class StringValueMemorizer implements IStringValue {
 
         private String currentValue = null;
 
-        @Override
-        public void actionPerformed(ActionEvent actionEvent) {
-            final String newValue = (String) ((JComboBox<String>) actionEvent.getSource()).getSelectedItem();
+        void updateValue(String newValue) {
             if (newValue == null)
                 return;
 
@@ -55,20 +49,19 @@ public final class FontProperties {
 
         final StringValueMemorizer stringValueMemorizer = new StringValueMemorizer();
         final JComboBox<String> comboBox = new JComboBox<>(values);
-        comboBox.addActionListener(stringValueMemorizer);
+        comboBox.addActionListener(actionEvent -> {
+            stringValueMemorizer.updateValue((String) comboBox.getSelectedItem());
+        });
 
         this.componentContainer.add(comboBox);
         return stringValueMemorizer;
     }
 
-    private class IntegerValueMemorizer implements ChangeListener, IIntegerValue {
+    private class IntegerValueMemorizer implements IIntegerValue {
 
         private int currentValue = 0;
 
-        @Override
-        public void stateChanged(ChangeEvent changeEvent) {
-            final int newValue = (int) ((JSpinner) changeEvent.getSource()).getValue();
-
+        void updateValue(int newValue) {
             final boolean hasChanged = newValue != this.currentValue;
             this.currentValue = newValue;
 
@@ -87,20 +80,19 @@ public final class FontProperties {
 
         final IntegerValueMemorizer integerValueMemorizer = new IntegerValueMemorizer();
         final JSpinner spinner = new JSpinner(new SpinnerNumberModel(initialValue, minimum, maximum, stepSize));
-        spinner.addChangeListener(integerValueMemorizer);
+        spinner.addChangeListener(changeEvent -> {
+            integerValueMemorizer.updateValue((int) spinner.getValue());
+        });
 
         this.componentContainer.add(spinner);
         return integerValueMemorizer;
     }
 
-    private class BooleanValueMemorizer implements ChangeListener, IBooleanValue {
+    private class BooleanValueMemorizer implements IBooleanValue {
 
         private boolean currentValue = false;
 
-        @Override
-        public void stateChanged(ChangeEvent changeEvent) {
-            final boolean newValue = ((JCheckBox) changeEvent.getSource()).isSelected();
-
+        void updateValue(boolean newValue) {
             final boolean hasChanged = newValue != this.currentValue;
             this.currentValue = newValue;
 
@@ -119,13 +111,15 @@ public final class FontProperties {
 
         final BooleanValueMemorizer booleanValueMemorizer = new BooleanValueMemorizer();
         final JCheckBox checkBox = new JCheckBox();
-        checkBox.addChangeListener(booleanValueMemorizer);
+        checkBox.addChangeListener(changeEvent -> {
+            booleanValueMemorizer.updateValue(checkBox.isSelected());
+        });
 
         this.componentContainer.add(checkBox);
         return booleanValueMemorizer;
     }
 
     private void checkChanges() {
-        // TODO Check has something changed? If yes run onChange
+        this.onChange.run();
     }
 }

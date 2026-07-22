@@ -62,7 +62,7 @@ public final class Main {
         }
 
         String name = "";
-        int style = Font.PLAIN;
+        String style = "plain";
         int size = 20;
         int count = 256;
         boolean antiAlias = false;
@@ -89,14 +89,15 @@ public final class Main {
                     break;
                 case STYLE:
                     try {
-                        style = FontStyle.getId(stringValue);
+                        style = stringValue;
+                        FontStyle.newFontWithStyle(name, style, 10); // TODO Hacky to ensure style exists...
                     } catch (Exception exception) {
                         System.err.println("Unknown style: " + stringValue);
                         return;
                     }
                     break;
                 case COUNT:
-                    try {
+                    try { // TODO Add range begin and end
                         count = Integer.parseInt(stringValue);
                         if (count < 1)
                             throw new NumberFormatException("Is negative");
@@ -116,7 +117,7 @@ public final class Main {
             }
         }
 
-        final Font font = new Font(name, style, count);
+        final Font font = FontStyle.newFontWithStyle(name, style, size);
         final GlyphRange range = new GlyphRange((char) count);
         final BitmapFont bitmapFont = BitmapFontGenerator.generate(font, range, antiAlias);
         try {
