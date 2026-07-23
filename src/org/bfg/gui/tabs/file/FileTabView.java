@@ -1,4 +1,4 @@
-package org.bfg.gui;
+package org.bfg.gui.tabs.file;
 
 import org.bfg.Context;
 import org.bfg.generate.BitmapFont;
@@ -14,10 +14,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-final class FileView extends JPanel {
+public final class FileTabView extends JPanel {
 
     private final Context context;
-    private final BitmapFontView fontView;
+    private final FontView fontView;
     private final IStringValue fontName;
     private final IStringValue fontStyle;
     private final IIntegerValue fontSize;
@@ -25,7 +25,7 @@ final class FileView extends JPanel {
     private final IIntegerValue rangeEnd;
     private final IBooleanValue antiAlias;
 
-    FileView(Context context) {
+    public FileTabView(Context context) {
         super();
         setLayout(new BorderLayout());
         this.context = context;
@@ -34,7 +34,7 @@ final class FileView extends JPanel {
         topBar.setLayout(new BoxLayout(topBar, BoxLayout.LINE_AXIS));
         add(topBar, BorderLayout.PAGE_START);
 
-        this.fontView = new BitmapFontView(this.context);
+        this.fontView = new FontView(this.context);
         add(this.fontView, BorderLayout.CENTER);
 
         final FontProperties fontProperties = new FontProperties(topBar, this::generateFont);

@@ -1,4 +1,4 @@
-package org.bfg.gui;
+package org.bfg.gui.tabs.welcome;
 
 import org.bfg.Context;
 import org.bfg.gui.custom.LinkLabel;
@@ -6,9 +6,9 @@ import org.bfg.gui.custom.LinkLabel;
 import javax.swing.*;
 import java.awt.*;
 
-final class WelcomeView extends JPanel {
+public final class WelcomeTabView extends JPanel {
 
-    WelcomeView(Context context) {
+    public WelcomeTabView(Context context) {
         super();
         setLayout(new BorderLayout());
 

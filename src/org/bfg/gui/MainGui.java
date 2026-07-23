@@ -3,9 +3,9 @@ package org.bfg.gui;
 import org.bfg.Context;
 import org.bfg.generate.BitmapFont;
 import org.bfg.generate.Export;
-import org.bfg.generate.MetaDataGenerator;
+import org.bfg.gui.tabs.file.FileTabView;
+import org.bfg.gui.tabs.welcome.WelcomeTabView;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
@@ -28,7 +28,7 @@ public final class MainGui extends JFrame {
         // ---------------------------------------
 
         this.tabbedPane = new JTabbedPane();
-        final WelcomeView welcomeTab = new WelcomeView(this.context);
+        final WelcomeTabView welcomeTab = new WelcomeTabView(this.context);
         openTab("Welcome", welcomeTab);
 
         add(this.tabbedPane, BorderLayout.CENTER);
@@ -49,7 +49,7 @@ public final class MainGui extends JFrame {
 
         final JMenuItem exportItem = new JMenuItem("Export");
         exportItem.addActionListener(actionEvent -> {
-            final FileView openedTab = getOpenedFontView();
+            final FileTabView openedTab = getOpenedFontView();
             if (openedTab == null)
                 return;
 
@@ -125,7 +125,7 @@ public final class MainGui extends JFrame {
 
     private void openTab(String title, Component component) {
         for (int tabIndex = 0; tabIndex < this.tabbedPane.getTabCount(); tabIndex++) {
-            if (this.tabbedPane.getComponentAt(tabIndex) instanceof WelcomeView) {
+            if (this.tabbedPane.getComponentAt(tabIndex) instanceof WelcomeTabView) {
                 this.tabbedPane.remove(tabIndex);
                 break;
             }
@@ -141,7 +141,7 @@ public final class MainGui extends JFrame {
         if (title == null)
             title = "null";
 
-        openTab(title, new FileView(this.context));
+        openTab(title, new FileTabView(this.context));
     }
 
     public void renameCurrentTab(String title) {
@@ -167,10 +167,10 @@ public final class MainGui extends JFrame {
         return this.showGridItem.getState();
     }
 
-    private FileView getOpenedFontView() {
+    private FileTabView getOpenedFontView() {
         final Component tab = this.tabbedPane.getSelectedComponent();
-        if (tab instanceof FileView)
-            return (FileView) tab;
+        if (tab instanceof FileTabView)
+            return (FileTabView) tab;
 
         return null;
     }

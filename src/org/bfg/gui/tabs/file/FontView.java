@@ -1,4 +1,4 @@
-package org.bfg.gui;
+package org.bfg.gui.tabs.file;
 
 import org.bfg.Context;
 import org.bfg.generate.BitmapFont;
@@ -12,7 +12,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-public final class BitmapFontView extends JPanel {
+public final class FontView extends JPanel {
 
     private final Context context;
     private BitmapFont font;
@@ -21,7 +21,7 @@ public final class BitmapFontView extends JPanel {
     private Rectangle renderArea;
     private Rectangle highlightArea;
 
-    public BitmapFontView(Context context) {
+    public FontView(Context context) {
         this.context = context;
         this.renderImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         this.renderGraphics = this.renderImage.createGraphics();
