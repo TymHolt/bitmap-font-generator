@@ -5,6 +5,10 @@ import java.util.Objects;
 
 public final class FontStyle {
 
+    public static String[] getAllValues() {
+        return new String[] {"Plain", "Italic", "Bold"};
+    }
+
     public static Font newFontWithStyle(String fontName, String styleName, int size) {
         Objects.requireNonNull(fontName);
         Objects.requireNonNull(styleName);
