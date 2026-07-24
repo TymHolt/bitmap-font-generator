@@ -30,12 +30,28 @@ public final class FileTabView extends JPanel {
         setLayout(new BorderLayout());
         this.context = context;
 
-        final JPanel topBar = new JPanel();
-        topBar.setLayout(new BoxLayout(topBar, BoxLayout.LINE_AXIS));
-        add(topBar, BorderLayout.PAGE_START);
+        final PropertyView propertyView = new PropertyView();
+        //add(propertyView, BorderLayout.LINE_START);
 
         this.fontView = new FontView(this.context);
-        add(this.fontView, BorderLayout.CENTER);
+        //add(this.fontView, BorderLayout.CENTER);
+
+        JSplitPane splitPane = new JSplitPane(
+                JSplitPane.HORIZONTAL_SPLIT,
+                propertyView,
+                this.fontView
+        );
+
+        splitPane.setDividerLocation(250);
+        splitPane.setResizeWeight(0);
+        splitPane.setDividerSize(6);
+
+        add(splitPane, BorderLayout.CENTER);
+
+        // TODO Legacy
+        // --------------------------------------------------------------------------------------------
+        final JPanel topBar = new JPanel();
+        topBar.setLayout(new BoxLayout(topBar, BoxLayout.LINE_AXIS));
 
         final FontProperties fontProperties = new FontProperties(topBar, this::generateFont);
         this.fontName = fontProperties.addComboBox("Font", getAllFontNames());
@@ -45,6 +61,7 @@ public final class FileTabView extends JPanel {
         this.rangeEnd = fontProperties.addSpinner("End ID", 255, 0, Character.MAX_VALUE, 1);
         this.antiAlias = fontProperties.addCheckBox("Anti-Alias");
         fontProperties.updateControls();
+        // --------------------------------------------------------------------------------------------
 
         generateFont();
     }
