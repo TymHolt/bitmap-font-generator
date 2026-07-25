@@ -20,6 +20,7 @@ public final class PropertyView extends JPanel {
 
     public PropertyView(ControlValueChangeObserver controlValueChangeObserver) {
         setPreferredSize(new Dimension(250, 0));
+        setMinimumSize(new Dimension(0, 0));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         this.fontNameControl = new StringComboBoxControl(getAllFontNames(), controlValueChangeObserver);
