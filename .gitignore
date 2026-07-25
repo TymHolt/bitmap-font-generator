@@ -1,2 +1,4 @@
 out
 bitmap-font-generator.jar
+*.iml
+.idea
