@@ -1,4 +1,4 @@
-package org.bfg.gui.tabs.file;
+package org.bfg.gui.tabs.file.font;
 
 import org.bfg.Context;
 import org.bfg.generate.BitmapFont;
@@ -20,9 +20,14 @@ public final class FontView extends JPanel {
     private Graphics2D renderGraphics;
     private Rectangle renderArea;
     private Rectangle highlightArea;
+    private char highlightChar;
 
-    public FontView(Context context) {
+    public FontView(Context context, ICharSelectionCallback charSelectionCallback) {
+        Objects.requireNonNull(context);
         this.context = context;
+
+        Objects.requireNonNull(charSelectionCallback);
+
         this.renderImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         this.renderGraphics = this.renderImage.createGraphics();
         this.highlightArea = null;
@@ -37,40 +42,47 @@ public final class FontView extends JPanel {
 
             @Override
             public void mouseMoved(MouseEvent mouseEvent) {
-                highlightArea = null;
+                updateSelection(mouseEvent);
 
-                final int x = mouseEvent.getX();
-                final int y = mouseEvent.getY();
-
-                if (!renderArea.contains(x, y) || font == null)
-                    return;
-
-                final float xLocal = (float) (x - renderArea.x) + 0.5f;
-                final float yLocal = (float) (y - renderArea.y) + 0.5f;
-                final float normalizedX = xLocal / (float) renderArea.width;
-                final float normalizedY = yLocal / (float) renderArea.height;
-                final int sourceX = (int) (normalizedX * (float) renderImage.getWidth());
-                final int sourceY = (int) (normalizedY * (float) renderImage.getHeight());
-
-                final GlyphRange range = font.getRange();
-                for (char c = range.lowEnd; c <= range.highEnd; c++) {
-                    final GlyphInfo glyphInfo = font.getGlyphInfo(c);
-                    final Rectangle glyphBounds = new Rectangle(
-                        glyphInfo.x,
-                        glyphInfo.y,
-                        glyphInfo.width,
-                        glyphInfo.height);
-
-                    if (glyphBounds.contains(sourceX, sourceY)) {
-                        highlightArea = glyphBounds;
-                        break;
-                    }
-                }
-
-                invalidate();
-                repaint();
+                if (highlightArea != null)
+                    charSelectionCallback.onSelectChar(highlightChar, highlightArea);
+                else
+                    charSelectionCallback.onClearSelection();
             }
         });
+    }
+
+    private void updateSelection(MouseEvent mouseEvent) {
+        this.highlightArea = null;
+        this.highlightChar = 0;
+
+        final int x = mouseEvent.getX();
+        final int y = mouseEvent.getY();
+
+        if (!this.renderArea.contains(x, y) || this.font == null)
+            return;
+
+        final float xLocal = (float) (x - this.renderArea.x) + 0.5f;
+        final float yLocal = (float) (y - this.renderArea.y) + 0.5f;
+        final float normalizedX = xLocal / (float) this.renderArea.width;
+        final float normalizedY = yLocal / (float) this.renderArea.height;
+        final int sourceX = (int) (normalizedX * (float) this.renderImage.getWidth());
+        final int sourceY = (int) (normalizedY * (float) this.renderImage.getHeight());
+
+        final GlyphRange range = this.font.getRange();
+        for (char c = range.lowEnd; c <= range.highEnd; c++) {
+            final GlyphInfo glyphInfo = this.font.getGlyphInfo(c);
+            final Rectangle glyphBounds = new Rectangle(glyphInfo.x, glyphInfo.y, glyphInfo.width, glyphInfo.height);
+
+            if (glyphBounds.contains(sourceX, sourceY)) {
+                this.highlightArea = glyphBounds;
+                this.highlightChar = c;
+                break;
+            }
+        }
+
+        invalidate();
+        repaint();
     }
 
     public void setFont(BitmapFont font) {

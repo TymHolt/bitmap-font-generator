@@ -5,6 +5,9 @@ import org.bfg.generate.BitmapFont;
 import org.bfg.generate.BitmapFontGenerator;
 import org.bfg.generate.FontStyle;
 import org.bfg.generate.GlyphRange;
+import org.bfg.gui.tabs.file.character.CharView;
+import org.bfg.gui.tabs.file.font.FontView;
+import org.bfg.gui.tabs.file.font.ICharSelectionCallback;
 import org.bfg.gui.tabs.file.property.PropertyView;
 import org.bfg.gui.tabs.file.property.controls.ControlValueChangeObserver;
 
@@ -23,8 +26,11 @@ public final class FileTabView extends JPanel {
         setLayout(new BorderLayout());
         this.context = context;
 
+        final CharView charView = new CharView();
+        add(charView, BorderLayout.LINE_END);
+
         this.propertyView = new PropertyView(new ControlValueChangeObserver(this::generateFont));
-        this.fontView = new FontView(this.context);
+        this.fontView = new FontView(this.context, charView);
         final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.propertyView, this.fontView);
         splitPane.setDividerLocation(250);
         splitPane.setResizeWeight(0);
