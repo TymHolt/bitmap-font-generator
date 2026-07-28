@@ -7,7 +7,6 @@ import org.bfg.generate.FontStyle;
 import org.bfg.generate.GlyphRange;
 import org.bfg.gui.tabs.file.character.CharView;
 import org.bfg.gui.tabs.file.font.FontView;
-import org.bfg.gui.tabs.file.font.ICharSelectionCallback;
 import org.bfg.gui.tabs.file.property.PropertyView;
 import org.bfg.gui.tabs.file.property.controls.ControlValueChangeObserver;
 
@@ -20,17 +19,18 @@ public final class FileTabView extends JPanel {
     private final Context context;
     private final PropertyView propertyView;
     private final FontView fontView;
+    private final CharView charView;
 
     public FileTabView(Context context) {
         super();
         setLayout(new BorderLayout());
         this.context = context;
 
-        final CharView charView = new CharView();
-        add(charView, BorderLayout.LINE_END);
+        this.charView = new CharView();
+        add(this.charView, BorderLayout.LINE_END);
 
         this.propertyView = new PropertyView(new ControlValueChangeObserver(this::generateFont));
-        this.fontView = new FontView(this.context, charView);
+        this.fontView = new FontView(this.context, this.charView);
         final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.propertyView, this.fontView);
         splitPane.setDividerLocation(250);
         splitPane.setResizeWeight(0);
@@ -59,7 +59,8 @@ public final class FileTabView extends JPanel {
 
         final GlyphRange range = new GlyphRange(rangeBegin, rangeEnd);
         final BitmapFont bitmapFont = BitmapFontGenerator.generate(font, range, antiAlias);
-        this.fontView.setFont(bitmapFont);
+        this.fontView.setBitmapFont(bitmapFont);
+        this.charView.setBitmapFont(bitmapFont);
 
         final BufferedImage atlasImage = bitmapFont.getAtlasImage();
         final int width = atlasImage.getWidth();

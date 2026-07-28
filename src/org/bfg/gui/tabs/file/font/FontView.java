@@ -85,7 +85,7 @@ public final class FontView extends JPanel {
         repaint();
     }
 
-    public void setFont(BitmapFont font) {
+    public void setBitmapFont(BitmapFont font) {
         Objects.requireNonNull(font, "Font is null");
 
         this.font = font;

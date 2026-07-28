@@ -1,5 +1,6 @@
 package org.bfg.gui.tabs.file.character;
 
+import org.bfg.generate.BitmapFont;
 import org.bfg.gui.tabs.file.font.ICharSelectionCallback;
 
 import javax.swing.BorderFactory;
@@ -20,6 +21,8 @@ public final class CharView extends JPanel implements ICharSelectionCallback {
     private final JLabel labelY;
     private final JLabel labelWidth;
     private final JLabel labelHeight;
+    private final SubImageView subImageView;
+    private BitmapFont bitmapFont;
 
     public CharView() {
         setPreferredSize(new Dimension(250, 0));
@@ -44,16 +47,23 @@ public final class CharView extends JPanel implements ICharSelectionCallback {
         this.labelHeight = new JLabel("");
         add(createRow("Height", this.labelHeight));
 
+        this.subImageView = new SubImageView();
+        add(createRow(" ", this.subImageView, 3));
+
         add(Box.createVerticalGlue());
     }
 
     private JPanel createRow(String label, JComponent component) {
+        return createRow(label, component, 1);
+    }
+
+    private JPanel createRow(String label, JComponent component, int heightFactor) {
         final JPanel row = new JPanel(new BorderLayout(10, 0));
         row.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40 * heightFactor));
 
         final JLabel labelComponent = new JLabel(label);
-        labelComponent.setPreferredSize(new Dimension(90, labelComponent.getPreferredSize().height));
+        labelComponent.setPreferredSize(new Dimension(90, labelComponent.getPreferredSize().height * heightFactor));
 
         row.add(labelComponent, BorderLayout.WEST);
         row.add(component, BorderLayout.CENTER);
@@ -68,6 +78,9 @@ public final class CharView extends JPanel implements ICharSelectionCallback {
         this.labelY.setText(Integer.toString(bounds.y));
         this.labelWidth.setText(Integer.toString(bounds.width));
         this.labelHeight.setText(Integer.toString(bounds.height));
+
+        if (this.bitmapFont != null)
+            this.subImageView.setSubImage(bounds, this.bitmapFont.getAtlasImage());
     }
 
     @Override
@@ -78,5 +91,10 @@ public final class CharView extends JPanel implements ICharSelectionCallback {
         this.labelY.setText("");
         this.labelWidth.setText("");
         this.labelHeight.setText("");
+        this.subImageView.resetSubImage();
+    }
+
+    public void setBitmapFont(BitmapFont bitmapFont) {
+        this.bitmapFont = bitmapFont;
     }
 }
