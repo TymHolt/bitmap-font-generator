@@ -9,6 +9,7 @@ import org.bfg.gui.tabs.welcome.WelcomeTabView;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
@@ -28,8 +29,7 @@ public final class MainGui extends JFrame {
         // ---------------------------------------
 
         this.tabbedPane = new JTabbedPane();
-        final WelcomeTabView welcomeTab = new WelcomeTabView(this.context);
-        openTab("Welcome", welcomeTab);
+        newWelcomeTab();
 
         add(this.tabbedPane, BorderLayout.CENTER);
 
@@ -85,9 +85,7 @@ public final class MainGui extends JFrame {
         fileMenu.add(exportItem);
 
         final JMenuItem closeItem = new JMenuItem("Close");
-        closeItem.addActionListener(actionEvent -> {
-            this.context.closeCurrentTab();
-        });
+        closeItem.addActionListener(this::actionPerformed);
         fileMenu.add(closeItem);
 
         menuBar.add(fileMenu);
@@ -144,6 +142,10 @@ public final class MainGui extends JFrame {
         openTab(title, new FileTabView(this.context));
     }
 
+    public void newWelcomeTab() {
+        openTab("Welcome", new WelcomeTabView(this.context));
+    }
+
     public void renameCurrentTab(String title) {
         if (title == null)
             title = "null";
@@ -165,6 +167,10 @@ public final class MainGui extends JFrame {
 
     public boolean shouldShowGrid() {
         return this.showGridItem.getState();
+    }
+
+    public int getTabCount() {
+        return this.tabbedPane.getTabCount();
     }
 
     private FileTabView getOpenedFontView() {
@@ -197,11 +203,7 @@ public final class MainGui extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
-                final int index = tabbedPane.indexOfTabComponent(tabPanel);
-                if (index < 0)
-                    return;
-
-                tabbedPane.remove(index);
+                context.closeCurrentTab();
             }
 
             @Override
@@ -227,5 +229,9 @@ public final class MainGui extends JFrame {
         tabPanel.add(closeLabel);
 
         return tabPanel;
+    }
+
+    private void actionPerformed(ActionEvent actionEvent) {
+        this.context.closeCurrentTab();
     }
 }

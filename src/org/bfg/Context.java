@@ -20,6 +20,9 @@ public final class Context {
 
     public void closeCurrentTab() {
         this.gui.closeCurrentTab();
+
+        if (this.gui.getTabCount() == 0)
+            this.gui.newWelcomeTab();
     }
 
     public boolean shouldShowGrid() {
