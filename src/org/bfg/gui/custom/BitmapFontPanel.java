@@ -1,6 +1,5 @@
-package org.bfg.gui.tabs.file.font;
+package org.bfg.gui.custom;
 
-import org.bfg.Context;
 import org.bfg.generate.BitmapFont;
 import org.bfg.generate.GlyphInfo;
 import org.bfg.generate.GlyphRange;
@@ -12,58 +11,36 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-public final class FontView extends JPanel {
+public final class BitmapFontPanel extends JPanel implements MouseMotionListener {
 
-    private final Context context;
+    private final IGlyphSelectionListener glyphSelectionListener;
     private BitmapFont font;
-    private BufferedImage renderImage;
-    private Graphics2D renderGraphics;
-    private Rectangle renderArea;
-    private Rectangle highlightArea;
-    private char highlightChar;
+    private BufferedImage renderImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+    private Graphics2D renderGraphics = this.renderImage.createGraphics();
+    private Rectangle renderArea = new Rectangle(0, 0, 0, 0);
+    private GlyphInfo currentSelection = null;
+    private boolean showGridFlag = false;
 
-    public FontView(Context context, ICharSelectionCallback charSelectionCallback) {
-        Objects.requireNonNull(context);
-        this.context = context;
-
-        Objects.requireNonNull(charSelectionCallback);
-
-        this.renderImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-        this.renderGraphics = this.renderImage.createGraphics();
-        this.highlightArea = null;
-        this.renderArea = new Rectangle(0, 0, 0, 0);
-
-        addMouseMotionListener(new MouseMotionListener() {
-
-            @Override
-            public void mouseDragged(MouseEvent mouseEvent) {
-
-            }
-
-            @Override
-            public void mouseMoved(MouseEvent mouseEvent) {
-                updateSelection(mouseEvent);
-
-                if (highlightArea != null)
-                    charSelectionCallback.onSelectChar(highlightChar, highlightArea);
-                else
-                    charSelectionCallback.onClearSelection();
-            }
-        });
+    public BitmapFontPanel() {
+        this(null);
     }
 
-    private void updateSelection(MouseEvent mouseEvent) {
-        this.highlightArea = null;
-        this.highlightChar = 0;
+    public BitmapFontPanel(IGlyphSelectionListener glyphSelectionListener) {
+        super();
 
-        final int x = mouseEvent.getX();
-        final int y = mouseEvent.getY();
+        if (glyphSelectionListener == null)
+            glyphSelectionListener = selection -> {};
 
-        if (!this.renderArea.contains(x, y) || this.font == null)
-            return;
+        this.glyphSelectionListener = glyphSelectionListener;
+        addMouseMotionListener(this);
+    }
 
-        final float xLocal = (float) (x - this.renderArea.x) + 0.5f;
-        final float yLocal = (float) (y - this.renderArea.y) + 0.5f;
+    private GlyphInfo getGlyphSelection(int mouseX, int mouseY) {
+        if (!this.renderArea.contains(mouseX, mouseY) || this.font == null)
+            return null;
+
+        final float xLocal = (float) (mouseX - this.renderArea.x) + 0.5f;
+        final float yLocal = (float) (mouseY - this.renderArea.y) + 0.5f;
         final float normalizedX = xLocal / (float) this.renderArea.width;
         final float normalizedY = yLocal / (float) this.renderArea.height;
         final int sourceX = (int) (normalizedX * (float) this.renderImage.getWidth());
@@ -72,31 +49,43 @@ public final class FontView extends JPanel {
         final GlyphRange range = this.font.getRange();
         for (char c = range.lowEnd; c <= range.highEnd; c++) {
             final GlyphInfo glyphInfo = this.font.getGlyphInfo(c);
-            final Rectangle glyphBounds = new Rectangle(glyphInfo.x, glyphInfo.y, glyphInfo.width, glyphInfo.height);
-
-            if (glyphBounds.contains(sourceX, sourceY)) {
-                this.highlightArea = glyphBounds;
-                this.highlightChar = c;
-                break;
-            }
+            if (glyphBoundsContains(glyphInfo, sourceX, sourceY))
+                return glyphInfo;
         }
 
-        invalidate();
-        repaint();
+        return null;
+    }
+
+    private static boolean glyphBoundsContains(GlyphInfo glyphInfo, int x, int y) {
+        // TODO Maybe implement the check directly? We are allocating a new object for every check...
+        return new Rectangle(glyphInfo.x, glyphInfo.y, glyphInfo.width, glyphInfo.height).contains(x, y);
+    }
+
+
+    public void setShowGrid(boolean flag) {
+        this.showGridFlag = flag;
     }
 
     public void setBitmapFont(BitmapFont font) {
-        Objects.requireNonNull(font, "Font is null");
-
+        Objects.requireNonNull(font);
         this.font = font;
-        createRenderImage();
 
+        createRenderImage();
         invalidate();
         repaint();
     }
 
-    public BitmapFont getBitmapFont() {
-        return this.font;
+    @Override
+    public void mouseDragged(MouseEvent event) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent event) {
+        this.currentSelection = getGlyphSelection(event.getX(), event.getY());
+        this.glyphSelectionListener.onSelectGlyph(this.currentSelection);
+        invalidate();
+        repaint();
     }
 
     @Override
@@ -114,10 +103,9 @@ public final class FontView extends JPanel {
             this.renderGraphics.drawImage(this.font.getAtlasImage(), 0, 0, null);
 
         // Render mouse highlight
-        if (this.highlightArea != null) {
-            invertRenderImageArea(this.highlightArea.x, this.highlightArea.y,
-                this.highlightArea.width, this.highlightArea.height);
-        }
+        if (this.currentSelection != null)
+            invertRenderImageArea(this.currentSelection.x, this.currentSelection.y,
+                this.currentSelection.width, this.currentSelection.height);
 
         // Render to screen
         final int size = Math.min(getWidth(), getHeight());
@@ -125,7 +113,7 @@ public final class FontView extends JPanel {
         final int yOffset = (getHeight() - size) / 2;
         graphics.drawImage(this.renderImage, xOffset, yOffset, size, size, null);
 
-        if (this.context.shouldShowGrid() && this.font != null) {
+        if (this.showGridFlag && this.font != null) {
             final Dimension maxGlyphSize = this.font.getMaxGlyphSize();
             graphics.setColor(Color.RED);
 
@@ -152,10 +140,10 @@ public final class FontView extends JPanel {
         final int maxX = this.renderImage.getWidth() - 1;
         final int maxY = this.renderImage.getHeight() - 1;
 
-        final int xFrom = Math.max(minX, Math.min(maxX, x));
-        final int yFrom = Math.max(minY, Math.min(maxY, y));
-        final int xTo = Math.max(minX, Math.min(maxX, x + width - 1));
-        final int yTo = Math.max(minY, Math.min(maxY, y + height - 1));
+        final int xFrom = Math.clamp(x, minX, maxX);
+        final int yFrom = Math.clamp(y, minY, maxY);
+        final int xTo = Math.clamp(x + width - 1, minX, maxX);
+        final int yTo = Math.clamp(y + height - 1, minY, maxY);
 
         for (int currentX = xFrom; currentX <= xTo; currentX++)
             for (int currentY = yFrom; currentY <= yTo; currentY++) {
@@ -175,5 +163,9 @@ public final class FontView extends JPanel {
         this.renderImage = new BufferedImage(atlasImage.getWidth(), atlasImage.getHeight(),
             BufferedImage.TYPE_INT_RGB);
         this.renderGraphics = this.renderImage.createGraphics();
+    }
+
+    public interface IGlyphSelectionListener {
+        void onSelectGlyph(GlyphInfo selection);
     }
 }

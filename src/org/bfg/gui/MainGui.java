@@ -3,6 +3,7 @@ package org.bfg.gui;
 import org.bfg.Context;
 import org.bfg.generate.BitmapFont;
 import org.bfg.generate.Export;
+import org.bfg.gui.tabs.file.FileTabPresenter;
 import org.bfg.gui.tabs.file.FileTabView;
 import org.bfg.gui.tabs.welcome.WelcomeTabView;
 
@@ -73,7 +74,7 @@ public final class MainGui extends JFrame {
                 return;
 
             final File imageFile = fileChooser.getSelectedFile();
-            final BitmapFont bitmapFont = openedTab.getBitmapFont();
+            final BitmapFont bitmapFont = openedTab.getBitmapFont(); // -> Here we need the view controller?
 
             try {
                 Export.export(imageFile, bitmapFont);
@@ -139,7 +140,10 @@ public final class MainGui extends JFrame {
         if (title == null)
             title = "null";
 
-        openTab(title, new FileTabView(this.context));
+        final FileTabView view = new FileTabView();
+        final FileTabPresenter presenter = new FileTabPresenter(view);
+        view.setPresenter(presenter);
+        openTab(title, view);
     }
 
     public void newWelcomeTab() {

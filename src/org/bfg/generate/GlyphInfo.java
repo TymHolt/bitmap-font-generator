@@ -6,8 +6,10 @@ public final class GlyphInfo {
     public final int y;
     public final int width;
     public final int height;
+    public final char charValue;
 
-    GlyphInfo(int x, int y, int width, int height) {
+    GlyphInfo(char charValue, int x, int y, int width, int height) {
+        this.charValue = charValue;
         this.x = x;
         this.y = y;
         this.width = width;
