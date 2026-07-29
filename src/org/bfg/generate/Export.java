@@ -17,6 +17,7 @@ public final class Export {
         final String dataFilePath = changeFileExtension(imageFile.getAbsolutePath(), "xml");
         final File dataFile = new File(dataFilePath);
 
+        // TODO Ask to overwrite if already exists
         ImageIO.write(bitmapFont.getAtlasImage(), "PNG", imageFile);
         MetaDataGenerator.exportMetaData(dataFile, bitmapFont);
     }

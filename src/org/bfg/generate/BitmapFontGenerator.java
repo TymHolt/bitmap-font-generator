@@ -53,6 +53,8 @@ public final class BitmapFontGenerator {
 
         // Render glyphs to atlas
         for (char c = range.lowEnd; c <= range.highEnd; c++) {
+            // TODO Use GlyphMetrics for accuracy and for advance value
+
             final int glyphIndex = c - range.lowEnd;
             final int column = glyphIndex % glyphsPerRow;
             final int row = glyphIndex / glyphsPerRow;
@@ -69,8 +71,8 @@ public final class BitmapFontGenerator {
         }
 
         atlasGraphics.dispose();
-        return new BitmapFont(atlasImage, glyphInfos, range, fontMetrics.getLeading(),
-            maxGlyphSize);
+        return new BitmapFont(atlasImage, glyphInfos, range, fontMetrics.getLeading(), fontMetrics.getAscent(),
+            fontMetrics.getDescent(), maxGlyphSize);
     }
 
     private static BufferedImage createAtlasImage(int width, int height) {

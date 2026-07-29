@@ -23,6 +23,8 @@ public final class MetaDataGenerator {
 
             final Element fontElement = document.createElement("font");
             fontElement.setAttribute("leading", Integer.toString(font.getLeading()));
+            fontElement.setAttribute("ascent", Integer.toString(font.getAscent()));
+            fontElement.setAttribute("descent", Integer.toString(font.getDescent()));
             document.appendChild(fontElement);
 
             final GlyphRange range = font.getRange();
