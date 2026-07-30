@@ -27,7 +27,7 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
     }
 
     public void onSelectGlyph(GlyphInfo selection) {
-        // TODO
+        this.view.getGlyphView().setSelection(selection);
     }
 
     public void onChangeProperty() {
@@ -54,6 +54,8 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
 
         // TODO How can we get this to work?
         // this.context.renameCurrentTab(name + " (" + width + "x" + height + ")");
+        this.view.invalidate();
+        this.view.repaint();
     }
 
     @Override
@@ -86,5 +88,10 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
             JOptionPane.showMessageDialog(this, exception.getMessage(), "Error",
                 JOptionPane.ERROR_MESSAGE);
         }*/
+    }
+
+    @Override
+    public void setShowGrid(boolean flag) {
+        this.view.setShowGrid(flag);
     }
 }

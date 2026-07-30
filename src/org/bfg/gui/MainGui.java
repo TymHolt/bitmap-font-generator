@@ -35,9 +35,7 @@ public final class MainGui extends JFrame {
         final JMenu fileMenu = new JMenu("File");
 
         final JMenuItem newItem = new JMenuItem("New");
-        newItem.addActionListener(actionEvent -> {
-            newFileTab("New");
-        });
+        newItem.addActionListener(actionEvent -> newFileTab("New"));
         fileMenu.add(newItem);
 
         final JMenuItem exportItem = new JMenuItem("Export");
@@ -61,6 +59,12 @@ public final class MainGui extends JFrame {
         final JCheckBoxMenuItem showGridItem = new JCheckBoxMenuItem("Show Grid");
         showGridItem.setState(false);
         showGridItem.addItemListener(itemEvent -> {
+            for (int index = 0; index < this.tabbedPane.getTabCount(); index++) {
+                final Component tab = this.tabbedPane.getComponentAt(index);
+                if (tab instanceof ITabView)
+                    ((ITabView) tab).getPresenter().setShowGrid(showGridItem.getState());
+            }
+
             this.tabbedPane.invalidate();
             this.tabbedPane.repaint();
         });
@@ -113,6 +117,7 @@ public final class MainGui extends JFrame {
         //openTab("Welcome", new WelcomeTabView()); // TODO
     }
 
+    // TODO
     public void renameCurrentTab(String title) {
         if (title == null)
             title = "null";
@@ -145,16 +150,10 @@ public final class MainGui extends JFrame {
         tabPanel.setLayout(new BoxLayout(tabPanel, BoxLayout.LINE_AXIS));
         tabPanel.setOpaque(false);
 
-        // ---------------------------------------
-
         final JLabel titleLabel = new JLabel(title);
         tabPanel.add(titleLabel);
 
-        // ---------------------------------------
-
         tabPanel.add(Box.createHorizontalStrut(10));
-
-        // ---------------------------------------
 
         final JLabel closeLabel = new JLabel("X");
         closeLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));

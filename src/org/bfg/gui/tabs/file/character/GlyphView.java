@@ -1,6 +1,7 @@
 package org.bfg.gui.tabs.file.character;
 
 import org.bfg.generate.BitmapFont;
+import org.bfg.generate.GlyphInfo;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -10,9 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 
-public final class CharView extends JPanel {
+public final class GlyphView extends JPanel {
 
     private final JLabel labelId;
     private final JLabel labelChar;
@@ -23,7 +23,7 @@ public final class CharView extends JPanel {
     private final SubImageView subImageView;
     private BitmapFont bitmapFont;
 
-    public CharView() {
+    public GlyphView() {
         setPreferredSize(new Dimension(250, 0));
         setMinimumSize(new Dimension(0, 0));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -69,26 +69,28 @@ public final class CharView extends JPanel {
         return row;
     }
 
-    public void onSelectChar(char c, Rectangle bounds) {
-        this.labelId.setText(Integer.toString(c));
-        this.labelChar.setText(Character.toString(c));
-        this.labelX.setText(Integer.toString(bounds.x));
-        this.labelY.setText(Integer.toString(bounds.y));
-        this.labelWidth.setText(Integer.toString(bounds.width));
-        this.labelHeight.setText(Integer.toString(bounds.height));
+    public void setSelection(GlyphInfo selection) {
+        if (selection == null) {
+            this.labelId.setText("");
+            this.labelChar.setText("");
+            this.labelX.setText("");
+            this.labelY.setText("");
+            this.labelWidth.setText("");
+            this.labelHeight.setText("");
+            this.subImageView.resetSubImage();
+            return;
+        }
+
+        this.labelId.setText(Integer.toString(selection.charValue));
+        this.labelChar.setText(Character.toString(selection.charValue));
+        this.labelX.setText(Integer.toString(selection.x));
+        this.labelY.setText(Integer.toString(selection.y));
+        this.labelWidth.setText(Integer.toString(selection.width));
+        this.labelHeight.setText(Integer.toString(selection.height));
 
         if (this.bitmapFont != null)
-            this.subImageView.setSubImage(bounds, this.bitmapFont.getAtlasImage());
-    }
-
-    public void onClearSelection() {
-        this.labelId.setText("");
-        this.labelChar.setText("");
-        this.labelX.setText("");
-        this.labelY.setText("");
-        this.labelWidth.setText("");
-        this.labelHeight.setText("");
-        this.subImageView.resetSubImage();
+            this.subImageView.setSubImage(selection.x, selection.y, selection.width, selection.height,
+                this.bitmapFont.getAtlasImage());
     }
 
     public void setBitmapFont(BitmapFont bitmapFont) {

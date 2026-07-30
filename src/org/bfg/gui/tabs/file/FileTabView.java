@@ -5,7 +5,7 @@ import org.bfg.generate.GlyphInfo;
 import org.bfg.gui.custom.BitmapFontPanel;
 import org.bfg.gui.tabs.ITabPresenter;
 import org.bfg.gui.tabs.ITabView;
-import org.bfg.gui.tabs.file.character.CharView;
+import org.bfg.gui.tabs.file.character.GlyphView;
 import org.bfg.gui.tabs.file.property.PropertyView;
 import org.bfg.gui.tabs.file.property.controls.ControlValueChangeObserver;
 
@@ -22,19 +22,21 @@ public final class FileTabView extends JPanel implements ITabView {
         public void onChangeProperty() {}
         @Override
         public void doActionExport() {}
+        @Override
+        public void setShowGrid(boolean flag) {}
     };
     private final PropertyView propertyView;
     private final BitmapFontPanel bitmapFontPanel;
-    private final CharView charView;
+    private final GlyphView glyphView;
 
     public FileTabView() {
         super(new BorderLayout());
 
-        this.charView = new CharView();
-        add(this.charView, BorderLayout.LINE_END);
+        this.glyphView = new GlyphView();
+        add(this.glyphView, BorderLayout.LINE_END);
 
-        this.propertyView = new PropertyView(new ControlValueChangeObserver(this.presenter::onChangeProperty));
-        this.bitmapFontPanel = new BitmapFontPanel(this.presenter::onSelectGlyph);
+        this.propertyView = new PropertyView(new ControlValueChangeObserver(() -> this.presenter.onChangeProperty()));
+        this.bitmapFontPanel = new BitmapFontPanel(selection -> this.presenter.onSelectGlyph(selection));
         final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.propertyView,
             this.bitmapFontPanel);
         splitPane.setDividerLocation(250);
@@ -53,18 +55,21 @@ public final class FileTabView extends JPanel implements ITabView {
         return this.presenter;
     }
 
-    // TODO
     public void setShowGrid(boolean flag) {
         this.bitmapFontPanel.setShowGrid(flag);
     }
 
     public void setBitmapFont(BitmapFont font) {
         this.bitmapFontPanel.setBitmapFont(font);
-        this.charView.setBitmapFont(font);
+        this.glyphView.setBitmapFont(font);
     }
 
     public PropertyView getPropertyView() {
         return this.propertyView;
+    }
+
+    public GlyphView getGlyphView() {
+        return this.glyphView;
     }
 
     public interface IFileTabPresenter extends ITabPresenter {
