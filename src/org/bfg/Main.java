@@ -5,6 +5,7 @@ import org.bfg.generate.BitmapFontGenerator;
 import org.bfg.generate.Export;
 import org.bfg.generate.FontStyle;
 import org.bfg.generate.GlyphRange;
+import org.bfg.gui.MainGui;
 
 import javax.swing.*;
 import java.awt.Font;
@@ -147,7 +148,7 @@ public final class Main {
 
     private static void guiMode() {
         try {
-            new Context();
+            new MainGui();
         } catch (Exception exception) {
             JOptionPane.showMessageDialog(null, exception.getMessage(), "Error",
                 JOptionPane.ERROR_MESSAGE);

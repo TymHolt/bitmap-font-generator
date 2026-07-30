@@ -1,7 +1,6 @@
 package org.bfg.gui.tabs.file.character;
 
 import org.bfg.generate.BitmapFont;
-import org.bfg.gui.tabs.file.font.ICharSelectionCallback;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -13,7 +12,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
-public final class CharView extends JPanel implements ICharSelectionCallback {
+public final class CharView extends JPanel {
 
     private final JLabel labelId;
     private final JLabel labelChar;
@@ -70,7 +69,6 @@ public final class CharView extends JPanel implements ICharSelectionCallback {
         return row;
     }
 
-    @Override
     public void onSelectChar(char c, Rectangle bounds) {
         this.labelId.setText(Integer.toString(c));
         this.labelChar.setText(Character.toString(c));
@@ -83,7 +81,6 @@ public final class CharView extends JPanel implements ICharSelectionCallback {
             this.subImageView.setSubImage(bounds, this.bitmapFont.getAtlasImage());
     }
 
-    @Override
     public void onClearSelection() {
         this.labelId.setText("");
         this.labelChar.setText("");

@@ -1,6 +1,5 @@
 package org.bfg.gui.tabs.welcome;
 
-import org.bfg.Context;
 import org.bfg.gui.custom.LinkLabel;
 
 import javax.swing.*;
@@ -8,9 +7,8 @@ import java.awt.*;
 
 public final class WelcomeTabView extends JPanel {
 
-    public WelcomeTabView(Context context) {
-        super();
-        setLayout(new BorderLayout());
+    public WelcomeTabView() {
+        super(new BorderLayout());
 
         final JPanel outerContainer = new JPanel();
         outerContainer.setLayout(new GridBagLayout());
@@ -28,7 +26,7 @@ public final class WelcomeTabView extends JPanel {
         final LinkLabel newFileLabel = new LinkLabel("creating a new bitmap font...");
         newFileLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         newFileLabel.addActionListener(actionEvent -> {
-            context.actionNewFile();
+            //TODO context.actionNewFile();
         });
         innerContainer.add(newFileLabel);
 

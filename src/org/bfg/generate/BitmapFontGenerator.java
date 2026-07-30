@@ -66,7 +66,7 @@ public final class BitmapFontGenerator {
 
             final int glyphWidth = fontMetrics.charWidth(c);
             final int glyphHeight = maxGlyphSize.height;
-            final GlyphInfo glyphInfo = new GlyphInfo(atlasX, atlasY, glyphWidth, glyphHeight);
+            final GlyphInfo glyphInfo = new GlyphInfo(c, atlasX, atlasY, glyphWidth, glyphHeight);
             glyphInfos[glyphIndex] = glyphInfo;
         }
 

@@ -3,6 +3,8 @@ package org.bfg.gui.tabs.file;
 import org.bfg.generate.BitmapFont;
 import org.bfg.generate.GlyphInfo;
 import org.bfg.gui.custom.BitmapFontPanel;
+import org.bfg.gui.tabs.ITabPresenter;
+import org.bfg.gui.tabs.ITabView;
 import org.bfg.gui.tabs.file.character.CharView;
 import org.bfg.gui.tabs.file.property.PropertyView;
 import org.bfg.gui.tabs.file.property.controls.ControlValueChangeObserver;
@@ -11,13 +13,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
-public final class FileTabView extends JPanel {
+public final class FileTabView extends JPanel implements ITabView {
 
     private IFileTabPresenter presenter = new IFileTabPresenter() {
         @Override
         public void onSelectGlyph(GlyphInfo selection) {}
         @Override
         public void onChangeProperty() {}
+        @Override
+        public void doActionExport() {}
     };
     private final PropertyView propertyView;
     private final BitmapFontPanel bitmapFontPanel;
@@ -44,7 +48,8 @@ public final class FileTabView extends JPanel {
         this.presenter = presenter;
     }
 
-    public IFileTabPresenter getPresenter() {
+    @Override
+    public ITabPresenter getPresenter() {
         return this.presenter;
     }
 
@@ -62,7 +67,7 @@ public final class FileTabView extends JPanel {
         return this.propertyView;
     }
 
-    public interface IFileTabPresenter {
+    public interface IFileTabPresenter extends ITabPresenter {
         void onSelectGlyph(GlyphInfo selection);
         void onChangeProperty();
     }

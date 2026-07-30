@@ -1,31 +1,23 @@
 package org.bfg.gui;
 
-import org.bfg.Context;
-import org.bfg.generate.BitmapFont;
-import org.bfg.generate.Export;
+import org.bfg.gui.tabs.ITabView;
 import org.bfg.gui.tabs.file.FileTabPresenter;
 import org.bfg.gui.tabs.file.FileTabView;
 import org.bfg.gui.tabs.welcome.WelcomeTabView;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.IOException;
 
 public final class MainGui extends JFrame {
 
-    private final Context context;
     private final JTabbedPane tabbedPane;
-    private final JCheckBoxMenuItem showGridItem;
 
-    public MainGui(Context context) {
+    public MainGui() {
         super("Bitmap Font Generator");
         setLayout(new BorderLayout());
-        this.context = context;
 
         // ---------------------------------------
 
@@ -44,44 +36,15 @@ public final class MainGui extends JFrame {
 
         final JMenuItem newItem = new JMenuItem("New");
         newItem.addActionListener(actionEvent -> {
-            this.context.actionNewFile();
+            newFileTab("New");
         });
         fileMenu.add(newItem);
 
         final JMenuItem exportItem = new JMenuItem("Export");
         exportItem.addActionListener(actionEvent -> {
-            final FileTabView openedTab = getOpenedFontView();
-            if (openedTab == null)
-                return;
-
-            final JFileChooser fileChooser = new JFileChooser();
-            fileChooser.addChoosableFileFilter(new FileFilter() {
-
-                @Override
-                public boolean accept(File file) {
-                    return file.getName().endsWith(".png") || file.isDirectory();
-                }
-
-                @Override
-                public String getDescription() {
-                    return "Image (*.png)";
-                }
-            });
-            fileChooser.setAcceptAllFileFilterUsed(false);
-
-            final int action = fileChooser.showDialog(this, "Export font");
-            if (action != JFileChooser.APPROVE_OPTION)
-                return;
-
-            final File imageFile = fileChooser.getSelectedFile();
-            final BitmapFont bitmapFont = openedTab.getBitmapFont(); // -> Here we need the view controller?
-
-            try {
-                Export.export(imageFile, bitmapFont);
-            } catch (IOException exception) {
-                JOptionPane.showMessageDialog(this, exception.getMessage(), "Error",
-                    JOptionPane.ERROR_MESSAGE);
-            }
+            final ITabView openedTab = getOpenedFontView();
+            if (openedTab != null)
+                openedTab.getPresenter().doActionExport();
         });
         fileMenu.add(exportItem);
 
@@ -95,9 +58,9 @@ public final class MainGui extends JFrame {
 
         final JMenu viewMenu = new JMenu("View");
 
-        this.showGridItem = new JCheckBoxMenuItem("Show Grid");
-        this.showGridItem.setState(false);
-        this.showGridItem.addItemListener(itemEvent -> {
+        final JCheckBoxMenuItem showGridItem = new JCheckBoxMenuItem("Show Grid");
+        showGridItem.setState(false);
+        showGridItem.addItemListener(itemEvent -> {
             this.tabbedPane.invalidate();
             this.tabbedPane.repaint();
         });
@@ -147,7 +110,7 @@ public final class MainGui extends JFrame {
     }
 
     public void newWelcomeTab() {
-        openTab("Welcome", new WelcomeTabView(this.context));
+        //openTab("Welcome", new WelcomeTabView()); // TODO
     }
 
     public void renameCurrentTab(String title) {
@@ -161,7 +124,7 @@ public final class MainGui extends JFrame {
         this.tabbedPane.setTabComponentAt(selectedIndex, createTabComponent(title));
     }
 
-    public void closeCurrentTab() {
+    private void closeCurrentTab() {
         final int selectedIndex = this.tabbedPane.getSelectedIndex();
         if (selectedIndex < 0)
             return;
@@ -169,18 +132,10 @@ public final class MainGui extends JFrame {
         this.tabbedPane.remove(selectedIndex);
     }
 
-    public boolean shouldShowGrid() {
-        return this.showGridItem.getState();
-    }
-
-    public int getTabCount() {
-        return this.tabbedPane.getTabCount();
-    }
-
-    private FileTabView getOpenedFontView() {
+    private ITabView getOpenedFontView() {
         final Component tab = this.tabbedPane.getSelectedComponent();
-        if (tab instanceof FileTabView)
-            return (FileTabView) tab;
+        if (tab instanceof ITabView)
+            return (ITabView) tab;
 
         return null;
     }
@@ -207,7 +162,10 @@ public final class MainGui extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
-                context.closeCurrentTab();
+                closeCurrentTab();
+
+                if (tabbedPane.getSelectedIndex() == 0)
+                    newWelcomeTab();
             }
 
             @Override
@@ -236,6 +194,6 @@ public final class MainGui extends JFrame {
     }
 
     private void actionPerformed(ActionEvent actionEvent) {
-        this.context.closeCurrentTab();
+        closeCurrentTab();
     }
 }

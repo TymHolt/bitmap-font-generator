@@ -2,13 +2,19 @@ package org.bfg.gui.tabs.file;
 
 import org.bfg.generate.BitmapFont;
 import org.bfg.generate.BitmapFontGenerator;
+import org.bfg.generate.Export;
 import org.bfg.generate.FontStyle;
 import org.bfg.generate.GlyphInfo;
 import org.bfg.generate.GlyphRange;
 import org.bfg.gui.tabs.file.property.PropertyView;
 
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
@@ -48,5 +54,37 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
 
         // TODO How can we get this to work?
         // this.context.renameCurrentTab(name + " (" + width + "x" + height + ")");
+    }
+
+    @Override
+    public void doActionExport() {
+        /*final JFileChooser fileChooser = new JFileChooser();
+        fileChooser.addChoosableFileFilter(new FileFilter() {
+
+            @Override
+            public boolean accept(File file) {
+                return file.getName().endsWith(".png") || file.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Image (*.png)";
+            }
+        });
+        fileChooser.setAcceptAllFileFilterUsed(false);
+
+        final int action = fileChooser.showDialog(this, "Export font");
+        if (action != JFileChooser.APPROVE_OPTION)
+            return;
+
+        final File imageFile = fileChooser.getSelectedFile();
+        final BitmapFont bitmapFont = openedTab.getBitmapFont(); // -> Here we need the view controller?
+
+        try {
+            Export.export(imageFile, bitmapFont);
+        } catch (IOException exception) {
+            JOptionPane.showMessageDialog(this, exception.getMessage(), "Error",
+                JOptionPane.ERROR_MESSAGE);
+        }*/
     }
 }
