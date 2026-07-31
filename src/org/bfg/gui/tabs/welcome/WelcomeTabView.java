@@ -1,11 +1,23 @@
 package org.bfg.gui.tabs.welcome;
 
 import org.bfg.gui.custom.LinkLabel;
+import org.bfg.gui.tabs.ITabPresenter;
+import org.bfg.gui.tabs.ITabView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
-public final class WelcomeTabView extends JPanel {
+public final class WelcomeTabView extends JPanel implements ITabView {
+
+    private IWelcomeTabPresenter presenter = new IWelcomeTabPresenter() {
+        @Override
+        public void onOpenNewFile() {}
+        @Override
+        public void doActionExport() {}
+        @Override
+        public void setShowGrid(boolean flag) {}
+    };
 
     public WelcomeTabView() {
         super(new BorderLayout());
@@ -26,7 +38,7 @@ public final class WelcomeTabView extends JPanel {
         final LinkLabel newFileLabel = new LinkLabel("creating a new bitmap font...");
         newFileLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         newFileLabel.addActionListener(actionEvent -> {
-            //TODO context.actionNewFile();
+            this.presenter.onOpenNewFile();
         });
         innerContainer.add(newFileLabel);
 
@@ -35,5 +47,19 @@ public final class WelcomeTabView extends JPanel {
         // ---------------------------------------
 
         add(outerContainer, BorderLayout.CENTER);
+    }
+
+    public void setPresenter(IWelcomeTabPresenter presenter) {
+        Objects.requireNonNull(presenter);
+        this.presenter = presenter;
+    }
+
+    @Override
+    public ITabPresenter getPresenter() {
+        return this.presenter;
+    }
+
+    public interface IWelcomeTabPresenter extends ITabPresenter {
+        void onOpenNewFile();
     }
 }

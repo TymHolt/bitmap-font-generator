@@ -1,8 +1,6 @@
 package org.bfg.gui;
 
 import org.bfg.gui.tabs.ITabView;
-import org.bfg.gui.tabs.file.FileTabPresenter;
-import org.bfg.gui.tabs.file.FileTabView;
 import org.bfg.gui.tabs.welcome.WelcomeTabView;
 
 import javax.swing.*;
@@ -10,20 +8,23 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Objects;
 
 public final class MainGui extends JFrame {
 
+    private IMainGuiPresenter guiPresenter = new IMainGuiPresenter() {
+        @Override
+        public void onTabClose() {}
+        @Override
+        public void onOpenNewFile() {}
+    };
     private final JTabbedPane tabbedPane;
 
     public MainGui() {
         super("Bitmap Font Generator");
         setLayout(new BorderLayout());
 
-        // ---------------------------------------
-
         this.tabbedPane = new JTabbedPane();
-        newWelcomeTab();
-
         add(this.tabbedPane, BorderLayout.CENTER);
 
         // ---------------------------------------
@@ -35,7 +36,7 @@ public final class MainGui extends JFrame {
         final JMenu fileMenu = new JMenu("File");
 
         final JMenuItem newItem = new JMenuItem("New");
-        newItem.addActionListener(actionEvent -> newFileTab("New"));
+        //newItem.addActionListener(actionEvent -> newFileTab("New")); // TODO Move to GuiPresenter
         fileMenu.add(newItem);
 
         final JMenuItem exportItem = new JMenuItem("Export");
@@ -59,6 +60,7 @@ public final class MainGui extends JFrame {
         final JCheckBoxMenuItem showGridItem = new JCheckBoxMenuItem("Show Grid");
         showGridItem.setState(false);
         showGridItem.addItemListener(itemEvent -> {
+            // TODO Move to GuiPresenter
             for (int index = 0; index < this.tabbedPane.getTabCount(); index++) {
                 final Component tab = this.tabbedPane.getComponentAt(index);
                 if (tab instanceof ITabView)
@@ -89,7 +91,16 @@ public final class MainGui extends JFrame {
         setVisible(true);
     }
 
-    private void openTab(String title, Component component) {
+    public void setPresenter(IMainGuiPresenter presenter) {
+        Objects.requireNonNull(presenter);
+        this.guiPresenter = presenter;
+    }
+
+    public void openTab(String title, Component component) {
+        Objects.requireNonNull(title);
+        Objects.requireNonNull(component);
+
+        // TODO Move to GuiPresenter
         for (int tabIndex = 0; tabIndex < this.tabbedPane.getTabCount(); tabIndex++) {
             if (this.tabbedPane.getComponentAt(tabIndex) instanceof WelcomeTabView) {
                 this.tabbedPane.remove(tabIndex);
@@ -101,20 +112,6 @@ public final class MainGui extends JFrame {
         this.tabbedPane.setSelectedComponent(component);
         final Component tabComponent = createTabComponent(title);
         this.tabbedPane.setTabComponentAt(this.tabbedPane.getSelectedIndex(), tabComponent);
-    }
-
-    public void newFileTab(String title) {
-        if (title == null)
-            title = "null";
-
-        final FileTabView view = new FileTabView();
-        final FileTabPresenter presenter = new FileTabPresenter(view);
-        view.setPresenter(presenter);
-        openTab(title, view);
-    }
-
-    public void newWelcomeTab() {
-        //openTab("Welcome", new WelcomeTabView()); // TODO
     }
 
     // TODO
@@ -129,7 +126,7 @@ public final class MainGui extends JFrame {
         this.tabbedPane.setTabComponentAt(selectedIndex, createTabComponent(title));
     }
 
-    private void closeCurrentTab() {
+    public void closeCurrentTab() {
         final int selectedIndex = this.tabbedPane.getSelectedIndex();
         if (selectedIndex < 0)
             return;
@@ -161,10 +158,7 @@ public final class MainGui extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
-                closeCurrentTab();
-
-                if (tabbedPane.getSelectedIndex() == 0)
-                    newWelcomeTab();
+                guiPresenter.onTabClose();
             }
 
             @Override
@@ -188,11 +182,14 @@ public final class MainGui extends JFrame {
             }
         });
         tabPanel.add(closeLabel);
-
         return tabPanel;
     }
 
     private void actionPerformed(ActionEvent actionEvent) {
         closeCurrentTab();
+    }
+
+    public interface IMainGuiPresenter extends IGuiPresenter {
+        void onTabClose();
     }
 }

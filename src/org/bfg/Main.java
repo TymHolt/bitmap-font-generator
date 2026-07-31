@@ -6,6 +6,7 @@ import org.bfg.generate.Export;
 import org.bfg.generate.FontStyle;
 import org.bfg.generate.GlyphRange;
 import org.bfg.gui.MainGui;
+import org.bfg.gui.MainGuiPresenter;
 
 import javax.swing.*;
 import java.awt.Font;
@@ -148,7 +149,9 @@ public final class Main {
 
     private static void guiMode() {
         try {
-            new MainGui();
+            final MainGui gui = new MainGui();
+            final MainGuiPresenter guiPresenter = new MainGuiPresenter(gui);
+            gui.setPresenter(guiPresenter);
         } catch (Exception exception) {
             JOptionPane.showMessageDialog(null, exception.getMessage(), "Error",
                 JOptionPane.ERROR_MESSAGE);
