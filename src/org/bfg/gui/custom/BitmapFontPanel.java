@@ -57,8 +57,10 @@ public final class BitmapFontPanel extends JPanel implements MouseMotionListener
     }
 
     private static boolean glyphBoundsContains(GlyphInfo glyphInfo, int x, int y) {
-        // TODO Maybe implement the check directly? We are allocating a new object for every check...
-        return new Rectangle(glyphInfo.x, glyphInfo.y, glyphInfo.width, glyphInfo.height).contains(x, y);
+        return x >= glyphInfo.x &&
+                y >= glyphInfo.y &&
+                x < glyphInfo.x + glyphInfo.width &&
+                y < glyphInfo.y + glyphInfo.height;
     }
 
 
