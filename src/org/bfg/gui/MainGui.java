@@ -36,7 +36,7 @@ public final class MainGui extends JFrame {
         final JMenu fileMenu = new JMenu("File");
 
         final JMenuItem newItem = new JMenuItem("New");
-        //newItem.addActionListener(actionEvent -> newFileTab("New")); // TODO Move to GuiPresenter
+        newItem.addActionListener(actionEvent -> this.guiPresenter.onOpenNewFile());
         fileMenu.add(newItem);
 
         final JMenuItem exportItem = new JMenuItem("Export");
@@ -132,6 +132,10 @@ public final class MainGui extends JFrame {
             return;
 
         this.tabbedPane.remove(selectedIndex);
+    }
+
+    public int getTabCount() {
+        return this.tabbedPane.getTabCount();
     }
 
     private ITabView getOpenedFontView() {
