@@ -1,15 +1,17 @@
 package org.bfg.gui.tabs.welcome;
 
 import org.bfg.gui.custom.LinkLabel;
-import org.bfg.gui.tabs.ITabPresenter;
-import org.bfg.gui.tabs.ITabView;
+import org.bfg.gui.tabs.TabView;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
-public final class WelcomeTabView extends JPanel implements ITabView {
+public final class WelcomeTabView extends TabView {
 
+    public interface IWelcomeTabPresenter extends ITabPresenter {
+        void onOpenNewFile();
+    }
     private IWelcomeTabPresenter presenter = new IWelcomeTabPresenter() {
         @Override
         public void onOpenNewFile() {}
@@ -21,32 +23,28 @@ public final class WelcomeTabView extends JPanel implements ITabView {
 
     public WelcomeTabView() {
         super(new BorderLayout());
-
-        final JPanel outerContainer = new JPanel();
-        outerContainer.setLayout(new GridBagLayout());
-        final GridBagConstraints defaultConstraints = new GridBagConstraints();
-
-        // ---------------------------------------
-
-        final JPanel innerContainer = new JPanel();
-        innerContainer.setLayout(new BoxLayout(innerContainer, BoxLayout.PAGE_AXIS));
+        final JPanel container = addCenteredContainer();
 
         final JLabel welcomeLabel = new JLabel("Welcome, start by");
         welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        innerContainer.add(welcomeLabel);
+        container.add(welcomeLabel);
 
         final LinkLabel newFileLabel = new LinkLabel("creating a new bitmap font...");
         newFileLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        newFileLabel.addActionListener(actionEvent -> {
-            this.presenter.onOpenNewFile();
-        });
-        innerContainer.add(newFileLabel);
+        newFileLabel.addActionListener(_ -> this.presenter.onOpenNewFile());
+        container.add(newFileLabel);
+    }
 
-        outerContainer.add(innerContainer, defaultConstraints);
+    private JPanel addCenteredContainer() {
+        final JPanel outerContainer = new JPanel();
+        outerContainer.setLayout(new GridBagLayout());
 
-        // ---------------------------------------
+        final JPanel innerContainer = new JPanel();
+        innerContainer.setLayout(new BoxLayout(innerContainer, BoxLayout.PAGE_AXIS));
+        outerContainer.add(innerContainer, new GridBagConstraints());
 
         add(outerContainer, BorderLayout.CENTER);
+        return innerContainer;
     }
 
     public void setPresenter(IWelcomeTabPresenter presenter) {
@@ -57,9 +55,5 @@ public final class WelcomeTabView extends JPanel implements ITabView {
     @Override
     public ITabPresenter getPresenter() {
         return this.presenter;
-    }
-
-    public interface IWelcomeTabPresenter extends ITabPresenter {
-        void onOpenNewFile();
     }
 }

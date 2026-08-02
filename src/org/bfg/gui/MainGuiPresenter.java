@@ -1,5 +1,6 @@
 package org.bfg.gui;
 
+import org.bfg.gui.tabs.TabView;
 import org.bfg.gui.tabs.file.FileTabPresenter;
 import org.bfg.gui.tabs.file.FileTabView;
 import org.bfg.gui.tabs.welcome.WelcomeTabPresenter;
@@ -22,24 +23,22 @@ public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
         final FileTabPresenter presenter = new FileTabPresenter(view, this);
         view.setPresenter(presenter);
         this.gui.openTab("New", view);
-        System.out.println("wwd");
     }
 
     @Override
     public void onRenameTab(String title) {
-        this.gui.renameCurrentTab(title);
+        this.gui.setTabTitle(this.gui.getCurrenTab(), title);
     }
 
     @Override
-    public void onTabClose() {
-        this.gui.closeCurrentTab();
+    public void onTabClose(TabView view) {
+        this.gui.closeTab(view);
 
-        if (this.gui.getTabCount() != 0)
-            return;
-
-        final WelcomeTabView view = new WelcomeTabView();
-        final WelcomeTabPresenter presenter = new WelcomeTabPresenter(view, this);
-        view.setPresenter(presenter);
-        this.gui.openTab("Welcome", view);
+        if (this.gui.getTabCount() == 0) {
+            final WelcomeTabView welcomeTabView = new WelcomeTabView();
+            final WelcomeTabPresenter presenter = new WelcomeTabPresenter(welcomeTabView, this);
+            welcomeTabView.setPresenter(presenter);
+            this.gui.openTab("Welcome", welcomeTabView);
+        }
     }
 }

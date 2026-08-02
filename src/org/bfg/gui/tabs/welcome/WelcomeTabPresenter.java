@@ -21,6 +21,7 @@ public final class WelcomeTabPresenter implements WelcomeTabView.IWelcomeTabPres
     @Override
     public void onOpenNewFile() {
         this.guiPresenter.onOpenNewFile();
+        this.guiPresenter.onTabClose(this.view);
     }
 
     @Override
