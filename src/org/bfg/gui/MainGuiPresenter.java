@@ -19,10 +19,15 @@ public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
     @Override
     public void onOpenNewFile() {
         final FileTabView view = new FileTabView();
-        final FileTabPresenter presenter = new FileTabPresenter(view);
+        final FileTabPresenter presenter = new FileTabPresenter(view, this);
         view.setPresenter(presenter);
         this.gui.openTab("New", view);
         System.out.println("wwd");
+    }
+
+    @Override
+    public void onRenameTab(String title) {
+        this.gui.renameCurrentTab(title);
     }
 
     @Override
