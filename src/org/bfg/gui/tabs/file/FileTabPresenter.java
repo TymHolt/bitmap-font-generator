@@ -30,13 +30,11 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
 
         Objects.requireNonNull(guiPresenter);
         this.guiPresenter = guiPresenter;
+
+        generateFont();
     }
 
-    public void onSelectGlyph(GlyphInfo selection) {
-        this.view.getGlyphView().setSelection(selection);
-    }
-
-    public void onChangeProperty() {
+    private void generateFont() {
         final PropertyView propertyView = this.view.getPropertyView();
         final String name = propertyView.getFontName();
         final String style = propertyView.getFontStyle();
@@ -60,6 +58,14 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
 
         this.view.invalidate();
         this.view.repaint();
+    }
+
+    public void onSelectGlyph(GlyphInfo selection) {
+        this.view.getGlyphView().setSelection(selection);
+    }
+
+    public void onChangeProperty() {
+        generateFont();
     }
 
     @Override

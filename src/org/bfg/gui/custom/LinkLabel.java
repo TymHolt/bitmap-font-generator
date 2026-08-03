@@ -2,14 +2,16 @@ package org.bfg.gui.custom;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Objects;
 
 public final class LinkLabel extends JLabel {
 
-    private ActionListener actionListener;
+    private Runnable onClick = new Runnable() {
+        @Override
+        public void run() {}
+    };
 
     public LinkLabel(String text) {
         super(text);
@@ -19,10 +21,7 @@ public final class LinkLabel extends JLabel {
 
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
-                // TODO Is the ActionEvent right? Probably not
-                if (actionListener != null)
-                    actionListener.actionPerformed(new ActionEvent(this,
-                            ActionEvent.ACTION_PERFORMED, ""));
+                onClick.run();
             }
 
             @Override
@@ -47,10 +46,8 @@ public final class LinkLabel extends JLabel {
         });
     }
 
-    public void addActionListener(ActionListener actionListener) {
-        if (this.actionListener != null)
-            throw new IllegalStateException("Can only have one ActionListener");
-
-        this.actionListener = actionListener;
+    public void setOnClick(Runnable runnable) {
+        Objects.requireNonNull(runnable);
+        this.onClick = runnable;
     }
 }

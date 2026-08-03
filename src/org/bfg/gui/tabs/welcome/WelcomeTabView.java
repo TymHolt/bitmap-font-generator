@@ -31,7 +31,7 @@ public final class WelcomeTabView extends TabView {
 
         final LinkLabel newFileLabel = new LinkLabel("creating a new bitmap font...");
         newFileLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        newFileLabel.addActionListener(_ -> this.presenter.onOpenNewFile());
+        newFileLabel.setOnClick(() -> this.presenter.onOpenNewFile());
         container.add(newFileLabel);
     }
 

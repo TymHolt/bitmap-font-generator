@@ -11,9 +11,11 @@ import java.util.Objects;
 public final class MainGui extends JFrame {
 
     public interface IMainGuiPresenter extends IGuiPresenter {
-
+        void onActionShowGrid(boolean state);
     }
     private IMainGuiPresenter guiPresenter = new IMainGuiPresenter() {
+        @Override
+        public void onActionShowGrid(boolean state) {}
         @Override
         public void onTabClose(TabView view) {}
         @Override
@@ -69,17 +71,7 @@ public final class MainGui extends JFrame {
 
         final JCheckBoxMenuItem showGridItem = new JCheckBoxMenuItem("Show Grid");
         showGridItem.setState(false);
-        showGridItem.addItemListener(_ -> {
-            // TODO Move to GuiPresenter
-            for (int index = 0; index < this.tabbedPane.getTabCount(); index++) {
-                final Component tab = this.tabbedPane.getComponentAt(index);
-                if (tab instanceof TabView)
-                    ((TabView) tab).getPresenter().setShowGrid(showGridItem.getState());
-            }
-
-            this.tabbedPane.invalidate();
-            this.tabbedPane.repaint();
-        });
+        showGridItem.addItemListener(_ -> this.guiPresenter.onActionShowGrid(showGridItem.isSelected()));
         viewMenu.add(showGridItem);
 
         return viewMenu;
@@ -98,10 +90,11 @@ public final class MainGui extends JFrame {
     }
 
     public TabView getCurrenTab() {
-        final Component tab = this.tabbedPane.getSelectedComponent();
-        if (tab instanceof TabView)
-            return (TabView) tab;
-        return null;
+        return (TabView) this.tabbedPane.getSelectedComponent();
+    }
+
+    public TabView getTabAt(int index) {
+        return (TabView) this.tabbedPane.getComponentAt(index);
     }
 
     public void setTabTitle(TabView view, String title) {

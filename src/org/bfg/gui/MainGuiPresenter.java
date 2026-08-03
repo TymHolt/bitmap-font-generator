@@ -15,6 +15,14 @@ public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
     public MainGuiPresenter(MainGui gui) {
         Objects.requireNonNull(gui);
         this.gui = gui;
+        openWelcomeView();
+    }
+
+    private void openWelcomeView() {
+        final WelcomeTabView welcomeTabView = new WelcomeTabView();
+        final WelcomeTabPresenter presenter = new WelcomeTabPresenter(welcomeTabView, this);
+        welcomeTabView.setPresenter(presenter);
+        this.gui.openTab("Welcome", welcomeTabView);
     }
 
     @Override
@@ -34,11 +42,15 @@ public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
     public void onTabClose(TabView view) {
         this.gui.closeTab(view);
 
-        if (this.gui.getTabCount() == 0) {
-            final WelcomeTabView welcomeTabView = new WelcomeTabView();
-            final WelcomeTabPresenter presenter = new WelcomeTabPresenter(welcomeTabView, this);
-            welcomeTabView.setPresenter(presenter);
-            this.gui.openTab("Welcome", welcomeTabView);
-        }
+        if (this.gui.getTabCount() == 0)
+            openWelcomeView();
+    }
+
+    @Override
+    public void onActionShowGrid(boolean state) {
+        for (int index = 0; index < this.gui.getTabCount(); index++)
+            this.gui.getTabAt(index).getPresenter().setShowGrid(state);
+        this.gui.invalidate();
+        this.gui.repaint();
     }
 }
