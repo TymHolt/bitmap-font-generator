@@ -92,6 +92,7 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
         final File imageFile = fileChooser.getSelectedFile();
 
         try {
+            // TODO Ask if overwrite
             Export.export(imageFile, this.font);
         } catch (IOException exception) {
             JOptionPane.showMessageDialog(this.view, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

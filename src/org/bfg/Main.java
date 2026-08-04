@@ -123,6 +123,7 @@ public final class Main {
         final GlyphRange range = new GlyphRange((char) count);
         final BitmapFont bitmapFont = BitmapFontGenerator.generate(font, range, antiAlias);
         try {
+            // TODO Ask if overwrite
             Export.export(new File(outPath), bitmapFont);
         } catch (IOException exception) {
             System.err.println("Error: " + exception.getMessage());
