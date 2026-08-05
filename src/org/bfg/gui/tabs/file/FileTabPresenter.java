@@ -7,6 +7,7 @@ import org.bfg.generate.FontStyle;
 import org.bfg.generate.GlyphInfo;
 import org.bfg.generate.GlyphRange;
 import org.bfg.gui.IGuiPresenter;
+import org.bfg.gui.tabs.file.dialog.ExportDialogView;
 import org.bfg.gui.tabs.file.property.PropertyView;
 
 import javax.swing.JFileChooser;
@@ -70,6 +71,8 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
 
     @Override
     public void doActionExport() {
+        new ExportDialogView(this.guiPresenter.getGuiParent(), "Export Bitmap Font").setVisible(true);
+        /*
         final JFileChooser fileChooser = new JFileChooser();
         fileChooser.addChoosableFileFilter(new FileFilter() {
 
@@ -96,7 +99,7 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
             Export.export(imageFile, this.font);
         } catch (IOException exception) {
             JOptionPane.showMessageDialog(this.view, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        }*/
     }
 
     @Override

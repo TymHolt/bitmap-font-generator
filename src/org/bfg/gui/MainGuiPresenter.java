@@ -6,6 +6,7 @@ import org.bfg.gui.tabs.file.FileTabView;
 import org.bfg.gui.tabs.welcome.WelcomeTabPresenter;
 import org.bfg.gui.tabs.welcome.WelcomeTabView;
 
+import javax.swing.JFrame;
 import java.util.Objects;
 
 public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
@@ -44,6 +45,11 @@ public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
 
         if (this.gui.getTabCount() == 0)
             openWelcomeView();
+    }
+
+    @Override
+    public JFrame getGuiParent() {
+        return this.gui;
     }
 
     @Override

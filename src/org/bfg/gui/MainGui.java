@@ -19,6 +19,8 @@ public final class MainGui extends JFrame {
         @Override
         public void onTabClose(TabView view) {}
         @Override
+        public JFrame getGuiParent() {return null;}
+        @Override
         public void onOpenNewFile() {}
         @Override
         public void onRenameTab(String title) {}
