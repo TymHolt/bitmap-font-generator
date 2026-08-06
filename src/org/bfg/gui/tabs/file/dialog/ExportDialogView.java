@@ -1,13 +1,15 @@
 package org.bfg.gui.tabs.file.dialog;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.io.File;
 import java.util.Objects;
 
@@ -29,18 +31,45 @@ public final class ExportDialogView extends JDialog {
         setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
 
         this.imageFileField = new JTextField();
-        addRow(null, this.imageFileField, new JButton("..."));
+        addRow("Image File", null, this.imageFileField, new JButton("..."));
+
+        add(Box.createVerticalStrut(50));
 
         this.dataFileField = new JTextField();
-        addRow(null, this.dataFileField, new JButton("..."));
+        addRow("Data File", null, this.dataFileField, new JButton("..."));
 
-        addRow(new JButton("Cancel"), null, new JButton("Export"));
+        add(Box.createVerticalStrut(50));
+
+        final JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(_ -> {
+            this.confirmed = false;
+            dispose();
+        });
+        final JButton exportButton = new JButton("Export");
+        exportButton.addActionListener(_ -> {
+            this.confirmed = true;
+            dispose();
+        });
+        addRow(cancelButton, Box.createHorizontalStrut(50), exportButton);
 
         pack();
         setLocationRelativeTo(parent);
+        setResizable(false);
     }
 
-    private void addRow(JComponent left, JComponent center, JComponent right) {
+    private void addRow(Component left, Component center, Component right) {
+        addRow(null, left, center, right);
+    }
+
+    private void addRow(String label, Component left, Component center, Component right) {
+        if (label != null) {
+            final JPanel labelContainer = new JPanel(new BorderLayout());
+            final JLabel labelComponent = new JLabel(label);
+            labelComponent.setAlignmentX(Component.LEFT_ALIGNMENT);
+            labelContainer.add(labelComponent, BorderLayout.CENTER);
+            add(labelContainer);
+        }
+
         final JPanel row = new JPanel(new BorderLayout());
 
         if (left != null)
