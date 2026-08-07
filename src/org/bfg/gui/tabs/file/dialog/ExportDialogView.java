@@ -4,10 +4,12 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.io.File;
@@ -31,12 +33,35 @@ public final class ExportDialogView extends JDialog {
         setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
 
         this.imageFileField = new JTextField();
-        addRow("Image File", null, this.imageFileField, new JButton("..."));
+        this.dataFileField = new JTextField();
+
+        final JButton imageFileSelectButon = new JButton("...");
+        imageFileSelectButon.addActionListener(_ -> {
+            final String path = showFileChooser("Choose image file", ".png", "Image (*.png)");
+            if (path == null)
+                return;
+
+            this.imageFileField.setText(path);
+
+            if (this.dataFileField.getText().isEmpty())
+                this.dataFileField.setText(changeFileExtension(path, "xml"));
+        });
+        addRow("Image File", null, this.imageFileField, imageFileSelectButon);
 
         add(Box.createVerticalStrut(50));
 
-        this.dataFileField = new JTextField();
-        addRow("Data File", null, this.dataFileField, new JButton("..."));
+        final JButton dataFileSelectButon = new JButton("...");
+        dataFileSelectButon.addActionListener(_ -> {
+            final String path = showFileChooser("Choose data file", ".xml", "Data (*.xml)");
+            if (path == null)
+                return;
+
+            this.dataFileField.setText(path);
+
+            if (this.imageFileField.getText().isEmpty())
+                this.imageFileField.setText(changeFileExtension(path, "xml"));
+        });
+        addRow("Data File", null, this.dataFileField, dataFileSelectButon);
 
         add(Box.createVerticalStrut(50));
 
@@ -50,7 +75,7 @@ public final class ExportDialogView extends JDialog {
             this.confirmed = true;
             dispose();
         });
-        addRow(cancelButton, Box.createHorizontalStrut(50), exportButton);
+        addRow(cancelButton, Box.createHorizontalStrut(360), exportButton);
 
         pack();
         setLocationRelativeTo(parent);
@@ -87,6 +112,43 @@ public final class ExportDialogView extends JDialog {
     public void setPresenter(IExportDialogViewPresenter presenter) {
         Objects.requireNonNull(presenter);
         this.presenter = presenter;
+    }
+
+    private String showFileChooser(String title, String extension, String description) {
+        final JFileChooser fileChooser = new JFileChooser();
+        fileChooser.addChoosableFileFilter(new FileFilter() {
+
+            @Override
+            public boolean accept(File file) {
+                return file.getName().endsWith(extension) || file.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return description;
+            }
+        });
+        fileChooser.setAcceptAllFileFilterUsed(false);
+
+        final int action = fileChooser.showDialog(this, title);
+        if (action != JFileChooser.APPROVE_OPTION)
+            return null;
+
+        String path = fileChooser.getSelectedFile().getAbsolutePath();
+        if (!path.endsWith(extension))
+            path = path + extension;
+
+        return path;
+    }
+
+    private static String changeFileExtension(String path, String newExtension) {
+        int extensionIndex;
+        for(extensionIndex = path.length() - 1; extensionIndex >= 0; extensionIndex--) {
+            if (path.charAt(extensionIndex) == '.')
+                break;
+        }
+
+        return path.substring(0, extensionIndex + 1) + newExtension;
     }
 
     public ExportDialogResult getResult() {

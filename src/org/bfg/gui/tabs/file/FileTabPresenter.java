@@ -71,35 +71,11 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
 
     @Override
     public void doActionExport() {
-        new ExportDialogView(this.guiPresenter.getGuiParent(), "Export Bitmap Font").setVisible(true);
-        /*
-        final JFileChooser fileChooser = new JFileChooser();
-        fileChooser.addChoosableFileFilter(new FileFilter() {
-
-            @Override
-            public boolean accept(File file) {
-                return file.getName().endsWith(".png") || file.isDirectory();
-            }
-
-            @Override
-            public String getDescription() {
-                return "Image (*.png)";
-            }
-        });
-        fileChooser.setAcceptAllFileFilterUsed(false);
-
-        final int action = fileChooser.showDialog(this.view, "Export font");
-        if (action != JFileChooser.APPROVE_OPTION)
-            return;
-
-        final File imageFile = fileChooser.getSelectedFile();
-
-        try {
-            // TODO Ask if overwrite
-            Export.export(imageFile, this.font);
-        } catch (IOException exception) {
-            JOptionPane.showMessageDialog(this.view, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }*/
+        // TODO Ask if overwrite
+        final ExportDialogView dialog = new ExportDialogView(this.guiPresenter.getGuiParent(), "Export Bitmap Font");
+        dialog.setVisible(true);
+        final ExportDialogView.ExportDialogResult result = dialog.getResult();
+        // TODO Export.export();
     }
 
     @Override
