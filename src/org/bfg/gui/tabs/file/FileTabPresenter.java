@@ -7,15 +7,12 @@ import org.bfg.generate.FontStyle;
 import org.bfg.generate.GlyphInfo;
 import org.bfg.generate.GlyphRange;
 import org.bfg.gui.IGuiPresenter;
-import org.bfg.gui.tabs.file.dialog.ExportDialogView;
+import org.bfg.gui.tabs.file.dialog.ExportDialog;
 import org.bfg.gui.tabs.file.property.PropertyView;
 
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -71,11 +68,18 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
 
     @Override
     public void doActionExport() {
-        // TODO Ask if overwrite
-        final ExportDialogView dialog = new ExportDialogView(this.guiPresenter.getGuiParent(), "Export Bitmap Font");
+        final ExportDialog dialog = new ExportDialog(this.guiPresenter.getGuiParent(), "Export Bitmap Font");
         dialog.setVisible(true);
-        final ExportDialogView.ExportDialogResult result = dialog.getResult();
-        // TODO Export.export();
+        final ExportDialog.ExportDialogResult result = dialog.getResult();
+        if (!result.confirmed)
+            return;
+
+        try {
+            // TODO Ask if overwrite
+            Export.export(result.imageFile, result.dataFile, this.font);
+        } catch (IOException exception) {
+            JOptionPane.showMessageDialog(this.view, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     @Override

@@ -18,20 +18,6 @@ import java.util.Objects;
 
 public final class Export {
 
-    public static void export(File imageFile, BitmapFont bitmapFont) throws IOException {
-        export(imageFile, new File(changeFileExtension(imageFile.getAbsolutePath(), ".xml")), bitmapFont);
-    }
-
-    private static String changeFileExtension(String path, String newExtension) {
-        int extensionIndex;
-        for(extensionIndex = path.length() - 1; extensionIndex >= 0; extensionIndex--) {
-            if (path.charAt(extensionIndex) == '.')
-                break;
-        }
-
-        return path.substring(0, extensionIndex + 1) + newExtension;
-    }
-
     public static void export(File imageFile, File dataFile, BitmapFont bitmapFont) throws IOException {
         Objects.requireNonNull(imageFile);
         Objects.requireNonNull(dataFile);

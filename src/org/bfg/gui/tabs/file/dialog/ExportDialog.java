@@ -15,20 +15,13 @@ import java.awt.Component;
 import java.io.File;
 import java.util.Objects;
 
-public final class ExportDialogView extends JDialog {
-
-    public interface IExportDialogViewPresenter {
-
-    };
-    private IExportDialogViewPresenter presenter = new IExportDialogViewPresenter() {
-
-    };
+public final class ExportDialog extends JDialog {
 
     private final JTextField imageFileField;
     private final JTextField dataFileField;
     private boolean confirmed = false;
 
-    public ExportDialogView(JFrame parent, String title) {
+    public ExportDialog(JFrame parent, String title) {
         super(parent, title, true);
         setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
 
@@ -107,11 +100,6 @@ public final class ExportDialogView extends JDialog {
             row.add(right, BorderLayout.LINE_END);
 
         add(row);
-    }
-
-    public void setPresenter(IExportDialogViewPresenter presenter) {
-        Objects.requireNonNull(presenter);
-        this.presenter = presenter;
     }
 
     private String showFileChooser(String title, String extension, String description) {
