@@ -50,11 +50,11 @@ public final class MainGui extends JFrame {
         final JMenu fileMenu = new JMenu("File");
 
         final JMenuItem newItem = new JMenuItem("New");
-        newItem.addActionListener(_ -> this.guiPresenter.onOpenNewFile());
+        newItem.addActionListener(event -> this.guiPresenter.onOpenNewFile());
         fileMenu.add(newItem);
 
         final JMenuItem exportItem = new JMenuItem("Export");
-        exportItem.addActionListener(_ -> {
+        exportItem.addActionListener(event -> {
             final TabView openedTab = getCurrenTab();
             if (openedTab != null)
                 openedTab.getPresenter().doActionExport();
@@ -62,7 +62,7 @@ public final class MainGui extends JFrame {
         fileMenu.add(exportItem);
 
         final JMenuItem closeItem = new JMenuItem("Close");
-        closeItem.addActionListener(_ -> this.closeTab(this.getCurrenTab()));
+        closeItem.addActionListener(event -> this.closeTab(this.getCurrenTab()));
         fileMenu.add(closeItem);
 
         return fileMenu;
@@ -73,7 +73,7 @@ public final class MainGui extends JFrame {
 
         final JCheckBoxMenuItem showGridItem = new JCheckBoxMenuItem("Show Grid");
         showGridItem.setState(false);
-        showGridItem.addItemListener(_ -> this.guiPresenter.onActionShowGrid(showGridItem.isSelected()));
+        showGridItem.addItemListener(event -> this.guiPresenter.onActionShowGrid(showGridItem.isSelected()));
         viewMenu.add(showGridItem);
 
         return viewMenu;

@@ -28,7 +28,7 @@ public final class ExportDialog extends JDialog {
         this.dataFileField = new JTextField();
 
         final JButton imageFileSelectButon = new JButton("...");
-        imageFileSelectButon.addActionListener(_ -> {
+        imageFileSelectButon.addActionListener(event -> {
             final String path = showFileChooser("Choose image file", ".png", "Image (*.png)");
             if (path == null)
                 return;
@@ -43,7 +43,7 @@ public final class ExportDialog extends JDialog {
         add(Box.createVerticalStrut(50));
 
         final JButton dataFileSelectButon = new JButton("...");
-        dataFileSelectButon.addActionListener(_ -> {
+        dataFileSelectButon.addActionListener(event -> {
             final String path = showFileChooser("Choose data file", ".xml", "Data (*.xml)");
             if (path == null)
                 return;
@@ -58,12 +58,12 @@ public final class ExportDialog extends JDialog {
         add(Box.createVerticalStrut(50));
 
         final JButton cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(_ -> {
+        cancelButton.addActionListener(event -> {
             this.confirmed = false;
             dispose();
         });
         final JButton exportButton = new JButton("Export");
-        exportButton.addActionListener(_ -> {
+        exportButton.addActionListener(event -> {
             this.confirmed = true;
             dispose();
         });
