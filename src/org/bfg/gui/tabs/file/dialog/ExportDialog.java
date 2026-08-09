@@ -13,7 +13,6 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.io.File;
-import java.util.Objects;
 
 public final class ExportDialog extends JDialog {
 
