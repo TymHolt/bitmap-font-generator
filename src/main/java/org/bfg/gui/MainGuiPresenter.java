@@ -59,4 +59,14 @@ public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
         this.gui.invalidate();
         this.gui.repaint();
     }
+
+    @Override
+    public void onActionShowUvCoordinates(boolean state) {
+        // TODO Propagate to tab presenter
+    }
+
+    @Override
+    public void onActionInvertVAxis(boolean state) {
+        // TODO Propagate to tab presenter
+    }
 }
