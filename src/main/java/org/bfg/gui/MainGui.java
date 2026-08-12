@@ -13,15 +13,12 @@ public final class MainGui extends JFrame {
     public interface IMainGuiPresenter extends IGuiPresenter {
         void onActionShowGrid(boolean state);
         void onActionShowUvCoordinates(boolean state);
-        void onActionInvertVAxis(boolean state);
     }
     private IMainGuiPresenter guiPresenter = new IMainGuiPresenter() {
         @Override
         public void onActionShowGrid(boolean state) {}
         @Override
         public void onActionShowUvCoordinates(boolean state) {}
-        @Override
-        public void onActionInvertVAxis(boolean state) {}
         @Override
         public void onTabClose(TabView view) {}
         @Override
@@ -87,11 +84,6 @@ public final class MainGui extends JFrame {
         showUvCoordinatesItem.addItemListener(event ->
                 this.guiPresenter.onActionShowUvCoordinates(showUvCoordinatesItem.isSelected()));
         viewMenu.add(showUvCoordinatesItem);
-
-        final JCheckBoxMenuItem invertVAxisItem = new JCheckBoxMenuItem("Invert V-Axis");
-        invertVAxisItem.setState(false);
-        invertVAxisItem.addItemListener(event -> this.guiPresenter.onActionInvertVAxis(invertVAxisItem.isSelected()));
-        viewMenu.add(invertVAxisItem);
 
         return viewMenu;
     }

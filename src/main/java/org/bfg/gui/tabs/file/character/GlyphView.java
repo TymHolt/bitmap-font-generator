@@ -22,6 +22,7 @@ public final class GlyphView extends JPanel {
     private final JLabel labelHeight;
     private final SubImageView subImageView;
     private BitmapFont bitmapFont;
+    private boolean showUvCoordinates = false;
 
     public GlyphView() {
         setPreferredSize(new Dimension(250, 0));
@@ -81,12 +82,16 @@ public final class GlyphView extends JPanel {
             return;
         }
 
-        this.labelId.setText(Integer.toString(selection.charValue));
-        this.labelChar.setText(Character.toString(selection.charValue));
-        this.labelX.setText(Integer.toString(selection.x));
-        this.labelY.setText(Integer.toString(selection.y));
-        this.labelWidth.setText(Integer.toString(selection.width));
-        this.labelHeight.setText(Integer.toString(selection.height));
+        if (this.showUvCoordinates) {
+            // TODO Implement
+        } else {
+            this.labelId.setText(Integer.toString(selection.charValue));
+            this.labelChar.setText(Character.toString(selection.charValue));
+            this.labelX.setText(Integer.toString(selection.x));
+            this.labelY.setText(Integer.toString(selection.y));
+            this.labelWidth.setText(Integer.toString(selection.width));
+            this.labelHeight.setText(Integer.toString(selection.height));
+        }
 
         if (this.bitmapFont != null)
             this.subImageView.setSubImage(selection.x, selection.y, selection.width, selection.height,
@@ -95,5 +100,9 @@ public final class GlyphView extends JPanel {
 
     public void setBitmapFont(BitmapFont bitmapFont) {
         this.bitmapFont = bitmapFont;
+    }
+
+    public void setShowUvCoordinates(boolean flag) {
+        this.showUvCoordinates = flag;
     }
 }

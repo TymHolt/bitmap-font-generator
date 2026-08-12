@@ -86,4 +86,9 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
     public void setShowGrid(boolean flag) {
         this.view.setShowGrid(flag);
     }
+
+    @Override
+    public void setShowUvCoordinates(boolean flag) {
+        this.view.getGlyphView().setShowUvCoordinates(flag);
+    }
 }

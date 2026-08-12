@@ -62,11 +62,9 @@ public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
 
     @Override
     public void onActionShowUvCoordinates(boolean state) {
-        // TODO Propagate to tab presenter
-    }
-
-    @Override
-    public void onActionInvertVAxis(boolean state) {
-        // TODO Propagate to tab presenter
+        for (int index = 0; index < this.gui.getTabCount(); index++)
+            this.gui.getTabAt(index).getPresenter().setShowUvCoordinates(state);
+        this.gui.invalidate();
+        this.gui.repaint();
     }
 }

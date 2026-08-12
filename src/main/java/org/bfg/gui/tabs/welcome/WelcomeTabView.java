@@ -19,6 +19,8 @@ public final class WelcomeTabView extends TabView {
         public void doActionExport() {}
         @Override
         public void setShowGrid(boolean flag) {}
+        @Override
+        public void setShowUvCoordinates(boolean flag) {}
     };
 
     public WelcomeTabView() {
