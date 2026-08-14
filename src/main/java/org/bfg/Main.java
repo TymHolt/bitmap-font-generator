@@ -124,7 +124,7 @@ public final class Main {
         final BitmapFont bitmapFont = BitmapFontGenerator.generate(font, range, antiAlias);
         try {
             // TODO Ask if overwrite
-            Export.export(new File(outPath), new File(outPath + ".png"), bitmapFont);
+            Export.export(new File(outPath), new File(outPath + ".png"), bitmapFont, false);
         } catch (IOException exception) {
             System.err.println("Error: " + exception.getMessage());
         }

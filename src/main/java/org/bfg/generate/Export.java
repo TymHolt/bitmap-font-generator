@@ -18,7 +18,8 @@ import java.util.Objects;
 
 public final class Export {
 
-    public static void export(File imageFile, File dataFile, BitmapFont bitmapFont) throws IOException {
+    public static void export(File imageFile, File dataFile, BitmapFont bitmapFont, boolean exportUV)
+            throws IOException {
         Objects.requireNonNull(imageFile);
         Objects.requireNonNull(dataFile);
         Objects.requireNonNull(bitmapFont);
@@ -44,6 +45,13 @@ public final class Export {
                 glyphElement.setAttribute("y", Integer.toString(glyphInfo.y));
                 glyphElement.setAttribute("width", Integer.toString(glyphInfo.width));
                 glyphElement.setAttribute("height", Integer.toString(glyphInfo.height));
+
+                if (exportUV) {
+                    glyphElement.setAttribute("u", Float.toString(glyphInfo.u));
+                    glyphElement.setAttribute("v", Float.toString(glyphInfo.v));
+                    glyphElement.setAttribute("uWidth", Float.toString(glyphInfo.uWidth));
+                    glyphElement.setAttribute("vHeight", Float.toString(glyphInfo.vHeight));
+                }
 
                 fontElement.appendChild(glyphElement);
             }

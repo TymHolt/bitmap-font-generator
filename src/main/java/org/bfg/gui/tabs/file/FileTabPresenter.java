@@ -76,7 +76,7 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
 
         try {
             // TODO Ask if overwrite
-            Export.export(result.imageFile, result.dataFile, this.font);
+            Export.export(result.imageFile, result.dataFile, this.font, result.exportUV);
         } catch (IOException exception) {
             JOptionPane.showMessageDialog(this.view, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }

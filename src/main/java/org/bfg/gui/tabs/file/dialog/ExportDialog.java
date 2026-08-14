@@ -1,14 +1,6 @@
 package org.bfg.gui.tabs.file.dialog;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -18,6 +10,7 @@ public final class ExportDialog extends JDialog {
 
     private final JTextField imageFileField;
     private final JTextField dataFileField;
+    private final JCheckBox exportUVCheck;
     private boolean confirmed = false;
 
     public ExportDialog(JFrame parent, String title) {
@@ -54,6 +47,11 @@ public final class ExportDialog extends JDialog {
                 this.imageFileField.setText(changeFileExtension(path, "xml"));
         });
         addRow("Data File", null, this.dataFileField, dataFileSelectButon);
+
+        add(Box.createVerticalStrut(50));
+
+        this.exportUVCheck = new JCheckBox();
+        addRow(new JLabel("Export UV Coordinates"), this.exportUVCheck, null);
 
         add(Box.createVerticalStrut(50));
 
@@ -140,7 +138,8 @@ public final class ExportDialog extends JDialog {
 
     public ExportDialogResult getResult() {
         return new ExportDialogResult(
-            this.confirmed, new File(this.imageFileField.getText()), new File(this.dataFileField.getText()));
+            this.confirmed, new File(this.imageFileField.getText()), new File(this.dataFileField.getText()),
+                this.exportUVCheck.isSelected());
     }
 
     public static class ExportDialogResult {
@@ -148,11 +147,13 @@ public final class ExportDialog extends JDialog {
         public final boolean confirmed;
         public final File imageFile;
         public final File dataFile;
+        public final boolean exportUV;
 
-        private ExportDialogResult(boolean confirmed, File imageFile, File dataFile) {
+        private ExportDialogResult(boolean confirmed, File imageFile, File dataFile, boolean exportUV) {
             this.confirmed = confirmed;
             this.imageFile = imageFile;
             this.dataFile = dataFile;
+            this.exportUV = exportUV;
         }
     };
 }
