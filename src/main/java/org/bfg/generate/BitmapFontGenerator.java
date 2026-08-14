@@ -66,8 +66,12 @@ public final class BitmapFontGenerator {
 
             final int glyphWidth = fontMetrics.charWidth(c);
             final int glyphHeight = maxGlyphSize.height;
-            final GlyphInfo glyphInfo = new GlyphInfo(c, atlasX, atlasY, glyphWidth, glyphHeight);
-            glyphInfos[glyphIndex] = glyphInfo;
+            final float u = (float) atlasX / (float) atlasWidth;
+            final float v = (float) atlasY / (float) atlasHeight;
+            final float uWidth = (float) glyphWidth / (float) atlasWidth;
+            final float vHeight = (float) glyphHeight / (float) atlasHeight;
+
+            glyphInfos[glyphIndex] = new GlyphInfo(c, atlasX, atlasY, glyphWidth, glyphHeight, u, v, uWidth, vHeight);
         }
 
         atlasGraphics.dispose();

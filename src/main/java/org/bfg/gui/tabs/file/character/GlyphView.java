@@ -82,11 +82,15 @@ public final class GlyphView extends JPanel {
             return;
         }
 
+        this.labelId.setText(Integer.toString(selection.charValue));
+        this.labelChar.setText(Character.toString(selection.charValue));
+
         if (this.showUvCoordinates) {
-            // TODO Implement
+            this.labelX.setText(String.format("%.4f", selection.u));
+            this.labelY.setText(String.format("%.4f", selection.v));
+            this.labelWidth.setText(String.format("%.4f", selection.uWidth));
+            this.labelHeight.setText(String.format("%.4f", selection.vHeight));
         } else {
-            this.labelId.setText(Integer.toString(selection.charValue));
-            this.labelChar.setText(Character.toString(selection.charValue));
             this.labelX.setText(Integer.toString(selection.x));
             this.labelY.setText(Integer.toString(selection.y));
             this.labelWidth.setText(Integer.toString(selection.width));
