@@ -17,6 +17,7 @@ public final class PropertyView extends JPanel {
     private final IntegerSpinnerControl rangeBeginControl;
     private final IntegerSpinnerControl rangeEndControl;
     private final BooleanCheckBoxControl antiAliasControl;
+    private final BooleanCheckBoxControl invertYAxisControl;
 
     public PropertyView(ControlValueChangeObserver controlValueChangeObserver) {
         setPreferredSize(new Dimension(250, 0));
@@ -40,6 +41,9 @@ public final class PropertyView extends JPanel {
 
         this.antiAliasControl = new BooleanCheckBoxControl(controlValueChangeObserver);
         add(createRow("Anti-Alias", this.antiAliasControl));
+
+        this.invertYAxisControl = new BooleanCheckBoxControl(controlValueChangeObserver);
+        add(createRow("Invert Y-Axis", this.invertYAxisControl));
 
         add(Box.createVerticalGlue());
     }
@@ -66,6 +70,10 @@ public final class PropertyView extends JPanel {
 
     public boolean getAntiAlias() {
         return this.antiAliasControl.getBooleanValue();
+    }
+
+    public boolean getInvertYAxis() {
+        return this.invertYAxisControl.getBooleanValue();
     }
 
     private JPanel createRow(String label, JComponent component) {
