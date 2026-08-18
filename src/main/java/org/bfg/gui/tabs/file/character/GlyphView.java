@@ -97,9 +97,13 @@ public final class GlyphView extends JPanel {
             this.labelHeight.setText(Integer.toString(selection.height));
         }
 
-        if (this.bitmapFont != null)
-            this.subImageView.setSubImage(selection.x, selection.y, selection.width, selection.height,
+        if (this.bitmapFont != null) {
+            final int realY = this.bitmapFont.isYAxisInverted() ?
+                this.bitmapFont.getAtlasImage().getHeight() - selection.y : selection.y;
+
+            this.subImageView.setSubImage(selection.x, realY, selection.width, selection.height,
                 this.bitmapFont.getAtlasImage());
+        }
     }
 
     public void setBitmapFont(BitmapFont bitmapFont) {
