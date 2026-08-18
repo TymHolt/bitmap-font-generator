@@ -33,4 +33,9 @@ public final class WelcomeTabPresenter implements WelcomeTabView.IWelcomeTabPres
     public void setShowGrid(boolean flag) {
 
     }
+
+    @Override
+    public void setShowUvCoordinates(boolean flag) {
+
+    }
 }

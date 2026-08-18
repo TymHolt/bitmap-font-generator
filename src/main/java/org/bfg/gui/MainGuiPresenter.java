@@ -59,4 +59,12 @@ public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
         this.gui.invalidate();
         this.gui.repaint();
     }
+
+    @Override
+    public void onActionShowUvCoordinates(boolean state) {
+        for (int index = 0; index < this.gui.getTabCount(); index++)
+            this.gui.getTabAt(index).getPresenter().setShowUvCoordinates(state);
+        this.gui.invalidate();
+        this.gui.repaint();
+    }
 }

@@ -22,6 +22,7 @@ public final class GlyphView extends JPanel {
     private final JLabel labelHeight;
     private final SubImageView subImageView;
     private BitmapFont bitmapFont;
+    private boolean showUvCoordinates = false;
 
     public GlyphView() {
         setPreferredSize(new Dimension(250, 0));
@@ -83,17 +84,33 @@ public final class GlyphView extends JPanel {
 
         this.labelId.setText(Integer.toString(selection.charValue));
         this.labelChar.setText(Character.toString(selection.charValue));
-        this.labelX.setText(Integer.toString(selection.x));
-        this.labelY.setText(Integer.toString(selection.y));
-        this.labelWidth.setText(Integer.toString(selection.width));
-        this.labelHeight.setText(Integer.toString(selection.height));
 
-        if (this.bitmapFont != null)
-            this.subImageView.setSubImage(selection.x, selection.y, selection.width, selection.height,
+        if (this.showUvCoordinates) {
+            this.labelX.setText(String.format("%.4f", selection.u));
+            this.labelY.setText(String.format("%.4f", selection.v));
+            this.labelWidth.setText(String.format("%.4f", selection.uWidth));
+            this.labelHeight.setText(String.format("%.4f", selection.vHeight));
+        } else {
+            this.labelX.setText(Integer.toString(selection.x));
+            this.labelY.setText(Integer.toString(selection.y));
+            this.labelWidth.setText(Integer.toString(selection.width));
+            this.labelHeight.setText(Integer.toString(selection.height));
+        }
+
+        if (this.bitmapFont != null) {
+            final int realY = this.bitmapFont.isYAxisInverted() ?
+                this.bitmapFont.getAtlasImage().getHeight() - selection.y : selection.y;
+
+            this.subImageView.setSubImage(selection.x, realY, selection.width, selection.height,
                 this.bitmapFont.getAtlasImage());
+        }
     }
 
     public void setBitmapFont(BitmapFont bitmapFont) {
         this.bitmapFont = bitmapFont;
+    }
+
+    public void setShowUvCoordinates(boolean flag) {
+        this.showUvCoordinates = flag;
     }
 }

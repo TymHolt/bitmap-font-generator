@@ -121,10 +121,10 @@ public final class Main {
 
         final Font font = FontStyle.newFontWithStyle(name, style, size);
         final GlyphRange range = new GlyphRange((char) count);
-        final BitmapFont bitmapFont = BitmapFontGenerator.generate(font, range, antiAlias);
+        final BitmapFont bitmapFont = BitmapFontGenerator.generate(font, range, antiAlias, false);
         try {
             // TODO Ask if overwrite
-            Export.export(new File(outPath), new File(outPath + ".png"), bitmapFont);
+            Export.export(new File(outPath), new File(outPath + ".png"), bitmapFont, false);
         } catch (IOException exception) {
             System.err.println("Error: " + exception.getMessage());
         }

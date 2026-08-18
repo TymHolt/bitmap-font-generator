@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public final class BitmapFontGenerator {
 
-    public static BitmapFont generate(Font font, GlyphRange range, boolean antiAliased) {
+    public static BitmapFont generate(Font font, GlyphRange range, boolean antiAliased, boolean invertYAxis) {
         Objects.requireNonNull(font, "Font is null");
         Objects.requireNonNull(range, "Range is null");
 
@@ -64,15 +64,20 @@ public final class BitmapFontGenerator {
 
             atlasGraphics.drawString(String.valueOf(c), atlasX, baseline);
 
+            final int realY = invertYAxis ? atlasHeight - atlasY : atlasY;
             final int glyphWidth = fontMetrics.charWidth(c);
             final int glyphHeight = maxGlyphSize.height;
-            final GlyphInfo glyphInfo = new GlyphInfo(c, atlasX, atlasY, glyphWidth, glyphHeight);
-            glyphInfos[glyphIndex] = glyphInfo;
+            final float u = (float) atlasX / (float) atlasWidth;
+            final float v = (float) realY / (float) atlasHeight;
+            final float uWidth = (float) glyphWidth / (float) atlasWidth;
+            final float vHeight = (float) glyphHeight / (float) atlasHeight;
+
+            glyphInfos[glyphIndex] = new GlyphInfo(c, atlasX, realY, glyphWidth, glyphHeight, u, v, uWidth, vHeight);
         }
 
         atlasGraphics.dispose();
         return new BitmapFont(atlasImage, glyphInfos, range, fontMetrics.getLeading(), fontMetrics.getAscent(),
-            fontMetrics.getDescent(), maxGlyphSize);
+            fontMetrics.getDescent(), maxGlyphSize, invertYAxis);
     }
 
     private static BufferedImage createAtlasImage(int width, int height) {
