@@ -12,10 +12,13 @@ public final class MainGui extends JFrame {
 
     public interface IMainGuiPresenter extends IGuiPresenter {
         void onActionShowGrid(boolean state);
+        void onActionShowUvCoordinates(boolean state);
     }
     private IMainGuiPresenter guiPresenter = new IMainGuiPresenter() {
         @Override
         public void onActionShowGrid(boolean state) {}
+        @Override
+        public void onActionShowUvCoordinates(boolean state) {}
         @Override
         public void onTabClose(TabView view) {}
         @Override
@@ -23,7 +26,7 @@ public final class MainGui extends JFrame {
         @Override
         public void onOpenNewFile() {}
         @Override
-        public void onRenameTab(String title) {}
+        public void onRenameTab(TabView view, String title) {}
     };
     private final JTabbedPane tabbedPane;
 
@@ -50,11 +53,11 @@ public final class MainGui extends JFrame {
         final JMenu fileMenu = new JMenu("File");
 
         final JMenuItem newItem = new JMenuItem("New");
-        newItem.addActionListener(_ -> this.guiPresenter.onOpenNewFile());
+        newItem.addActionListener(event -> this.guiPresenter.onOpenNewFile());
         fileMenu.add(newItem);
 
         final JMenuItem exportItem = new JMenuItem("Export");
-        exportItem.addActionListener(_ -> {
+        exportItem.addActionListener(event -> {
             final TabView openedTab = getCurrenTab();
             if (openedTab != null)
                 openedTab.getPresenter().doActionExport();
@@ -62,7 +65,7 @@ public final class MainGui extends JFrame {
         fileMenu.add(exportItem);
 
         final JMenuItem closeItem = new JMenuItem("Close");
-        closeItem.addActionListener(_ -> this.closeTab(this.getCurrenTab()));
+        closeItem.addActionListener(event -> this.closeTab(this.getCurrenTab()));
         fileMenu.add(closeItem);
 
         return fileMenu;
@@ -73,8 +76,14 @@ public final class MainGui extends JFrame {
 
         final JCheckBoxMenuItem showGridItem = new JCheckBoxMenuItem("Show Grid");
         showGridItem.setState(false);
-        showGridItem.addItemListener(_ -> this.guiPresenter.onActionShowGrid(showGridItem.isSelected()));
+        showGridItem.addItemListener(event -> this.guiPresenter.onActionShowGrid(showGridItem.isSelected()));
         viewMenu.add(showGridItem);
+
+        final JCheckBoxMenuItem showUvCoordinatesItem = new JCheckBoxMenuItem("Show UV-Coordinates");
+        showUvCoordinatesItem.setState(false);
+        showUvCoordinatesItem.addItemListener(event ->
+                this.guiPresenter.onActionShowUvCoordinates(showUvCoordinatesItem.isSelected()));
+        viewMenu.add(showUvCoordinatesItem);
 
         return viewMenu;
     }

@@ -40,19 +40,26 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
         final char rangeBegin = propertyView.getRangeBegin();
         final char rangeEnd = propertyView.getRangeEnd();
         final boolean antiAlias = propertyView.getAntiAlias();
+        final boolean invertYAxis = propertyView.getInvertYAxis();
 
         if (name == null || style == null)
             return;
 
         final Font font = FontStyle.newFontWithStyle(name, style, size);
         final GlyphRange range = new GlyphRange(rangeBegin, rangeEnd);
-        this.font = BitmapFontGenerator.generate(font, range, antiAlias);
+        this.font = BitmapFontGenerator.generate(font, range, antiAlias, invertYAxis);
         this.view.setBitmapFont(this.font);
 
+        this.view.invalidate();
+        this.view.repaint();
+    }
+
+    private void updateTitle() {
         final BufferedImage atlasImage = this.font.getAtlasImage();
         final int width = atlasImage.getWidth();
         final int height = atlasImage.getHeight();
-        this.guiPresenter.onRenameTab(name + " (" + width + "x" + height + ")");
+        final String fontName = this.view.getPropertyView().getFontName();
+        this.guiPresenter.onRenameTab(this.view, fontName + " (" + width + "x" + height + ")");
 
         this.view.invalidate();
         this.view.repaint();
@@ -64,6 +71,7 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
 
     public void onChangeProperty() {
         generateFont();
+        updateTitle();
     }
 
     @Override
@@ -76,7 +84,7 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
 
         try {
             // TODO Ask if overwrite
-            Export.export(result.imageFile, result.dataFile, this.font);
+            Export.export(result.imageFile, result.dataFile, this.font, result.exportUV);
         } catch (IOException exception) {
             JOptionPane.showMessageDialog(this.view, exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -85,5 +93,10 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
     @Override
     public void setShowGrid(boolean flag) {
         this.view.setShowGrid(flag);
+    }
+
+    @Override
+    public void setShowUvCoordinates(boolean flag) {
+        this.view.getGlyphView().setShowUvCoordinates(flag);
     }
 }

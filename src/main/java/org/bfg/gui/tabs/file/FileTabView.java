@@ -27,6 +27,8 @@ public final class FileTabView extends TabView {
         public void doActionExport() {}
         @Override
         public void setShowGrid(boolean flag) {}
+        @Override
+        public void setShowUvCoordinates(boolean flag) {}
     };
     private final PropertyView propertyView;
     private final BitmapFontPanel bitmapFontPanel;

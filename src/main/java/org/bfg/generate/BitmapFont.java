@@ -11,9 +11,10 @@ public final class BitmapFont {
     private final GlyphRange range;
     private final int leading, ascent, descent;
     private final Dimension maxGlyphSize;
+    private final boolean invertedYAxis;
 
     BitmapFont(BufferedImage atlasImage, GlyphInfo[] infos, GlyphRange range, int leading, int ascent, int descent,
-       Dimension maxGlyphSize) {
+       Dimension maxGlyphSize, boolean invertedYAxis) {
         Objects.requireNonNull(atlasImage);
         this.atlasImage = atlasImage;
 
@@ -33,6 +34,8 @@ public final class BitmapFont {
 
         Objects.requireNonNull(maxGlyphSize);
         this.maxGlyphSize = maxGlyphSize;
+
+        this.invertedYAxis = invertedYAxis;
     }
 
     public GlyphInfo getGlyphInfo(char c) {
@@ -73,5 +76,9 @@ public final class BitmapFont {
 
     public Dimension getMaxGlyphSize() {
         return new Dimension(this.maxGlyphSize);
+    }
+
+    public boolean isYAxisInverted() {
+        return this.invertedYAxis;
     }
 }

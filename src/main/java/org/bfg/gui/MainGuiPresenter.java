@@ -35,8 +35,8 @@ public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
     }
 
     @Override
-    public void onRenameTab(String title) {
-        this.gui.setTabTitle(this.gui.getCurrenTab(), title);
+    public void onRenameTab(TabView view, String title) {
+        this.gui.setTabTitle(view, title);
     }
 
     @Override
@@ -56,6 +56,14 @@ public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
     public void onActionShowGrid(boolean state) {
         for (int index = 0; index < this.gui.getTabCount(); index++)
             this.gui.getTabAt(index).getPresenter().setShowGrid(state);
+        this.gui.invalidate();
+        this.gui.repaint();
+    }
+
+    @Override
+    public void onActionShowUvCoordinates(boolean state) {
+        for (int index = 0; index < this.gui.getTabCount(); index++)
+            this.gui.getTabAt(index).getPresenter().setShowUvCoordinates(state);
         this.gui.invalidate();
         this.gui.repaint();
     }

@@ -45,11 +45,12 @@ public final class BitmapFontPanel extends JPanel implements MouseMotionListener
         final float normalizedY = yLocal / (float) this.renderArea.height;
         final int sourceX = (int) (normalizedX * (float) this.renderImage.getWidth());
         final int sourceY = (int) (normalizedY * (float) this.renderImage.getHeight());
+        final int realY = this.font.isYAxisInverted() ? this.font.getAtlasImage().getHeight() - sourceY - 1 : sourceY;
 
         final GlyphRange range = this.font.getRange();
         for (char c = range.lowEnd; c <= range.highEnd; c++) {
             final GlyphInfo glyphInfo = this.font.getGlyphInfo(c);
-            if (glyphBoundsContains(glyphInfo, sourceX, sourceY))
+            if (glyphBoundsContains(glyphInfo, sourceX, realY + (this.font.isYAxisInverted() ? glyphInfo.height : 0)))
                 return glyphInfo;
         }
 
@@ -105,9 +106,13 @@ public final class BitmapFontPanel extends JPanel implements MouseMotionListener
             this.renderGraphics.drawImage(this.font.getAtlasImage(), 0, 0, null);
 
         // Render mouse highlight
-        if (this.currentSelection != null)
-            invertRenderImageArea(this.currentSelection.x, this.currentSelection.y,
-                this.currentSelection.width, this.currentSelection.height);
+        if (this.currentSelection != null) {
+            final int y = this.currentSelection.y;
+            final int realY = this.font.isYAxisInverted() ?
+                this.font.getAtlasImage().getHeight() - y : y;
+            invertRenderImageArea(this.currentSelection.x, realY, this.currentSelection.width,
+                this.currentSelection.height);
+        }
 
         // Render to screen
         final int size = Math.min(getWidth(), getHeight());

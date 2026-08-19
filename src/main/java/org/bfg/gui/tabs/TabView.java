@@ -8,6 +8,7 @@ public abstract class TabView extends JPanel {
     public interface ITabPresenter {
         void doActionExport();
         void setShowGrid(boolean flag);
+        void setShowUvCoordinates(boolean flag);
     }
 
     public TabView(LayoutManager layout) {
