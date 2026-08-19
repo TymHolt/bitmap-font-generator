@@ -26,7 +26,7 @@ public final class MainGui extends JFrame {
         @Override
         public void onOpenNewFile() {}
         @Override
-        public void onRenameTab(String title) {}
+        public void onRenameTab(TabView view, String title) {}
     };
     private final JTabbedPane tabbedPane;
 
