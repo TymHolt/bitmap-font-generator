@@ -50,10 +50,16 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
         this.font = BitmapFontGenerator.generate(font, range, antiAlias, invertYAxis);
         this.view.setBitmapFont(this.font);
 
+        this.view.invalidate();
+        this.view.repaint();
+    }
+
+    private void updateTitle() {
         final BufferedImage atlasImage = this.font.getAtlasImage();
         final int width = atlasImage.getWidth();
         final int height = atlasImage.getHeight();
-        this.guiPresenter.onRenameTab(name + " (" + width + "x" + height + ")");
+        final String fontName = this.view.getPropertyView().getFontName();
+        this.guiPresenter.onRenameTab(this.view, fontName + " (" + width + "x" + height + ")");
 
         this.view.invalidate();
         this.view.repaint();
@@ -65,6 +71,7 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
 
     public void onChangeProperty() {
         generateFont();
+        updateTitle();
     }
 
     @Override

@@ -35,8 +35,8 @@ public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
     }
 
     @Override
-    public void onRenameTab(String title) {
-        this.gui.setTabTitle(this.gui.getCurrenTab(), title);
+    public void onRenameTab(TabView view, String title) {
+        this.gui.setTabTitle(view, title);
     }
 
     @Override
