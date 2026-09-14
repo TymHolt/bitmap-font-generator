@@ -4,8 +4,24 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
+/**
+ * A factory for {@link BitmapFont} generation.
+ * <p>
+ * Renders an atlas image and generates the glyph infos for the given settings.
+ */
 public final class BitmapFontGenerator {
 
+    /**
+     * Renders the given font with the given settings and generates glyph and font metadata. The glyph coordinates have
+     * a default origin {@code (0, 0)} in the top-left corner.
+     *
+     * @param font         The font, must not be {@code null}
+     * @param range        The range of characters to include, must not be {@code null}
+     * @param antiAliased  If the rendered font should use antialiasing.
+     * @param invertYAxis  If the Y-axis of the glyph coordinates should be inverted.
+     * @return A new {@link BitmapFont} containing all data.
+     * @throws NullPointerException If needed arguments are null.
+     */
     public static BitmapFont generate(Font font, GlyphRange range, boolean antiAliased, boolean invertYAxis) {
         Objects.requireNonNull(font, "Font is null");
         Objects.requireNonNull(range, "Range is null");
