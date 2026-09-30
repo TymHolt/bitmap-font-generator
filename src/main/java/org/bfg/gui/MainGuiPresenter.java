@@ -9,10 +9,18 @@ import org.bfg.gui.tabs.welcome.WelcomeTabView;
 import javax.swing.JFrame;
 import java.util.Objects;
 
+/**
+ * The presenter implementation for the {@link MainGui}.
+ */
 public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
 
     private final MainGui gui;
 
+    /**
+     * Initializes the presenter and registers it for the given {@link MainGui} instance.
+     *
+     * @param gui The GUI instance, must not be {@link null}.
+     */
     public MainGuiPresenter(MainGui gui) {
         Objects.requireNonNull(gui);
         this.gui = gui;
