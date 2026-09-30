@@ -12,6 +12,9 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
+/**
+ * Side panel that shows metadata and a preview for a glyph.
+ */
 public final class GlyphView extends JPanel {
 
     private final JLabel labelId;
@@ -24,6 +27,9 @@ public final class GlyphView extends JPanel {
     private BitmapFont bitmapFont;
     private boolean showUvCoordinates = false;
 
+    /**
+     * Builds the view with a preferred width of 250 pixels.
+     */
     public GlyphView() {
         setPreferredSize(new Dimension(250, 0));
         setMinimumSize(new Dimension(0, 0));
@@ -70,6 +76,13 @@ public final class GlyphView extends JPanel {
         return row;
     }
 
+    /**
+     * Updates labels and preview for the given {@code selection}. If {@code selection} is {@code null}, all fields and
+     * the preview are cleared. The preview is only updated when a {@link BitmapFont} has been set via
+     * {@link #setBitmapFont(BitmapFont)}.
+     *
+     * @param selection Either the glyph to preview or null to clear the view.
+     */
     public void setSelection(GlyphInfo selection) {
         if (selection == null) {
             this.labelId.setText("");
@@ -106,10 +119,21 @@ public final class GlyphView extends JPanel {
         }
     }
 
+    /**
+     * Sets the generated font to get the glyph preview from. This does not refresh the preview.
+     *
+     * @param bitmapFont The font used for the preview.
+     */
     public void setBitmapFont(BitmapFont bitmapFont) {
         this.bitmapFont = bitmapFont;
     }
 
+    /**
+     * Set whether the glyph bounds should be shown in pixels or normalized UV coordinates. This does not refresh the
+     * preview.
+     *
+     * @param flag {@code true} to shoe UV coordinates.
+     */
     public void setShowUvCoordinates(boolean flag) {
         this.showUvCoordinates = flag;
     }

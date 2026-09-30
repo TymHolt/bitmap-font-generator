@@ -16,12 +16,21 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * Presenter for a single {@link FileTabView}.
+ */
 public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
 
     private final FileTabView view;
     private final IGuiPresenter guiPresenter;
     private BitmapFont font;
 
+    /**
+     * Binds this presenter to the given {@code view} and generates the initial font.
+     *
+     * @param view         The {@link FileTabView} to present, must not be {@code null}.
+     * @param guiPresenter The parent presenter for the GUI, must not be {@code null}.
+     */
     public FileTabPresenter(FileTabView view, IGuiPresenter guiPresenter) {
         Objects.requireNonNull(view);
         this.view = view;
@@ -65,10 +74,18 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
         this.view.repaint();
     }
 
+    /**
+     * Should be called when a glyph was selected or unselected.
+     *
+     * @param selection The selected glyph, may be {@code null} to clear.
+     */
     public void onSelectGlyph(GlyphInfo selection) {
         this.view.getGlyphView().setSelection(selection);
     }
 
+    /**
+     * Generate the font and refresh the tab title. Should be called when a property value changed.
+     */
     public void onChangeProperty() {
         generateFont();
         updateTitle();
