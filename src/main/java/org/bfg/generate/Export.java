@@ -16,8 +16,23 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * This class provides a utility function for exporting a {@link BitmapFont} as files.
+ */
 public final class Export {
 
+    /**
+     * Exports a {@link BitmapFont} as two files. An image file containing the rendered atlas and a {@code .xml} file
+     * containing the font and glyph metadata. If the files do not exist they will be created. If the files exist they
+     * will be overwritten without warning.
+     *
+     * @param imageFile  The {@code .png} image file for the atlas, must not be {@code null}.
+     * @param dataFile   The {@code .xml} file for the metadata, must not be {@code null}.
+     * @param bitmapFont The font to export, must not be {@code null}.
+     * @param exportUV   If the calculated glyph UV coordinates should be exported alongside the metadata.
+     * @throws NullPointerException If a required argument is {@code null}.
+     * @throws IOException          If the files cannot be created or written.
+     */
     public static void export(File imageFile, File dataFile, BitmapFont bitmapFont, boolean exportUV)
             throws IOException {
         Objects.requireNonNull(imageFile);

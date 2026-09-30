@@ -6,6 +6,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.io.File;
 
+/**
+ * Modal dialog for BitmapFont export settings and destinations.
+ */
 public final class ExportDialog extends JDialog {
 
     private final JTextField imageFileField;
@@ -13,6 +16,12 @@ public final class ExportDialog extends JDialog {
     private final JCheckBox exportUVCheck;
     private boolean confirmed = false;
 
+    /**
+     * Creates an instance of this modal dialog centered on the {@code parent}.
+     *
+     * @param parent The owner {@link JFrame}.
+     * @param title  The title of the dialog.
+     */
     public ExportDialog(JFrame parent, String title) {
         super(parent, title, true);
         setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
@@ -128,25 +137,39 @@ public final class ExportDialog extends JDialog {
 
     private static String changeFileExtension(String path, String newExtension) {
         int extensionIndex;
-        for(extensionIndex = path.length() - 1; extensionIndex >= 0; extensionIndex--) {
+        for(extensionIndex = path.length() - 1; extensionIndex >= 0; extensionIndex--)
             if (path.charAt(extensionIndex) == '.')
                 break;
-        }
 
         return path.substring(0, extensionIndex + 1) + newExtension;
     }
 
+    /**
+     * Returns the resulting export configuration. Als contains a flag if export was canceled.
+     *
+     * @return The resulting export configuration
+     */
     public ExportDialogResult getResult() {
         return new ExportDialogResult(
             this.confirmed, new File(this.imageFileField.getText()), new File(this.dataFileField.getText()),
                 this.exportUVCheck.isSelected());
     }
 
+    /**
+     * Contains an export configuration resulting from an {@link ExportDialog}.
+     */
     public static class ExportDialogResult {
 
+        /** {@code true} if the dialog was not canceled. */
         public final boolean confirmed;
+
+        /** Path for the image file export. */
         public final File imageFile;
+
+        /** Path for the XML file export. */
         public final File dataFile;
+
+        /** {@code true} if the UV coordinates should be exported alongside the pixel coordinates. */
         public final boolean exportUV;
 
         private ExportDialogResult(boolean confirmed, File imageFile, File dataFile, boolean exportUV) {
@@ -155,5 +178,5 @@ public final class ExportDialog extends JDialog {
             this.dataFile = dataFile;
             this.exportUV = exportUV;
         }
-    };
+    }
 }

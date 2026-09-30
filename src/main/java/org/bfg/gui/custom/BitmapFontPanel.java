@@ -11,6 +11,9 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
+/**
+ * A panel to interactively display a generated {@link BitmapFont}.
+ */
 public final class BitmapFontPanel extends JPanel implements MouseMotionListener {
 
     private final IGlyphSelectionListener glyphSelectionListener;
@@ -21,10 +24,18 @@ public final class BitmapFontPanel extends JPanel implements MouseMotionListener
     private GlyphInfo currentSelection = null;
     private boolean showGridFlag = false;
 
+    /**
+     * Creates this panel without a {@link IGlyphSelectionListener}.
+     */
     public BitmapFontPanel() {
         this(null);
     }
 
+    /**
+     * Creates this panel with the given listener, which is called when a glyph is hovered by the mouse.
+     *
+     * @param glyphSelectionListener The listener to call when the mouse hovers a glyph, may be null.
+     */
     public BitmapFontPanel(IGlyphSelectionListener glyphSelectionListener) {
         super();
 
@@ -64,11 +75,20 @@ public final class BitmapFontPanel extends JPanel implements MouseMotionListener
                 y < glyphInfo.y + glyphInfo.height;
     }
 
-
+    /**
+     * Sets if a grid should be rendered to show the glyph areas.
+     *
+     * @param flag {@code true} if the grid should be visible.
+     */
     public void setShowGrid(boolean flag) {
         this.showGridFlag = flag;
     }
 
+    /**
+     * Sets the generated {@link BitmapFont} to display.
+     *
+     * @param font The font to display, must not be {@code null}.
+     */
     public void setBitmapFont(BitmapFont font) {
         Objects.requireNonNull(font);
         this.font = font;
@@ -172,6 +192,9 @@ public final class BitmapFontPanel extends JPanel implements MouseMotionListener
         this.renderGraphics = this.renderImage.createGraphics();
     }
 
+    /**
+     * A listener to handle glyph selection.
+     */
     public interface IGlyphSelectionListener {
         void onSelectGlyph(GlyphInfo selection);
     }

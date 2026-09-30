@@ -14,10 +14,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * Main class of the runnable application.
+ */
 public final class Main {
 
     private static boolean mainCalled = false;
 
+    /**
+     * Application main method.
+     *
+     * @param args Command line arguments passed by the system.
+     */
     public static void main(String[] args) {
         if (mainCalled)
             throw new IllegalStateException("Main method called again");

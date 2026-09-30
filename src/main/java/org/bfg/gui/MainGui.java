@@ -8,10 +8,27 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Objects;
 
+/**
+ * The main window of this application, with tabs and menus.
+ */
 public final class MainGui extends JFrame {
 
+    /**
+     * The presenter interface for this GUI.
+     */
     public interface IMainGuiPresenter extends IGuiPresenter {
+        /**
+         * Will be called by this GUI when the show grid action is toggled.
+         *
+         * @param state The new state of the show grid flag.
+         */
         void onActionShowGrid(boolean state);
+
+        /**
+         * Will be called by this GUI when the show UV coordinates action is toggled.
+         *
+         * @param state The new state of the show UV coordinates flag.
+         */
         void onActionShowUvCoordinates(boolean state);
     }
     private IMainGuiPresenter guiPresenter = new IMainGuiPresenter() {
@@ -30,6 +47,9 @@ public final class MainGui extends JFrame {
     };
     private final JTabbedPane tabbedPane;
 
+    /**
+     * Creates the visible main window with no presenter set. The presenter should be given this instance to set itself.
+     */
     public MainGui() {
         super("Bitmap Font Generator");
         setLayout(new BorderLayout());
@@ -88,11 +108,22 @@ public final class MainGui extends JFrame {
         return viewMenu;
     }
 
+    /**
+     * Sets the presenter for this GUI.
+     *
+     * @param presenter The presenter, must not be {@code null}.
+     */
     public void setPresenter(IMainGuiPresenter presenter) {
         Objects.requireNonNull(presenter);
         this.guiPresenter = presenter;
     }
 
+    /**
+     * Opens the given {@link TabView} with the given title.
+     *
+     * @param title The title, may be {@code null}.
+     * @param view  The tab, must not be {@code null}.
+     */
     public void openTab(String title, TabView view) {
         Objects.requireNonNull(view);
         this.tabbedPane.addTab(title, view);
@@ -100,24 +131,47 @@ public final class MainGui extends JFrame {
         setTabTitle(view, title);
     }
 
+    /**
+     * @return The current visible {@link TabView}, or {@code null} if none is currently visible.
+     */
     public TabView getCurrenTab() {
         return (TabView) this.tabbedPane.getSelectedComponent();
     }
 
+    /**
+     * Returns the {@link TabView} that is at the position of the given index.
+     *
+     * @param index The index of the tab.
+     * @return The {@link TabView} at the {@code index}.
+     */
     public TabView getTabAt(int index) {
         return (TabView) this.tabbedPane.getComponentAt(index);
     }
 
+    /**
+     * Updates the title of the given {@link TabView}.
+     *
+     * @param view  The tab to update the title of, must not be {@code null}.
+     * @param title The new title, may be {@code null}.
+     */
     public void setTabTitle(TabView view, String title) {
         Objects.requireNonNull(view);
         this.tabbedPane.setTabComponentAt(getTabIndex(view), createTabTitle(title));
     }
 
+    /**
+     * Removes the given tab.
+     *
+     * @param view The tab close, must not be {@code null}.
+     */
     public void closeTab(TabView view) {
         Objects.requireNonNull(view);
         this.tabbedPane.remove(getTabIndex(view));
     }
 
+    /**
+     * @return The number of opened tabs.
+     */
     public int getTabCount() {
         return this.tabbedPane.getTabCount();
     }
