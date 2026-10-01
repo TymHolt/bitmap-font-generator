@@ -7,6 +7,7 @@ import org.bfg.generate.GlyphRange;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
@@ -14,7 +15,7 @@ import java.util.Objects;
 /**
  * A panel to interactively display a generated {@link BitmapFont}.
  */
-public final class BitmapFontPanel extends JPanel implements MouseMotionListener {
+public final class BitmapFontPanel extends JPanel implements MouseMotionListener, MouseListener {
 
     private final IGlyphSelectionListener glyphSelectionListener;
     private BitmapFont font;
@@ -44,6 +45,7 @@ public final class BitmapFontPanel extends JPanel implements MouseMotionListener
 
         this.glyphSelectionListener = glyphSelectionListener;
         addMouseMotionListener(this);
+        addMouseListener(this);
     }
 
     private GlyphInfo getGlyphSelection(int mouseX, int mouseY) {
@@ -99,13 +101,32 @@ public final class BitmapFontPanel extends JPanel implements MouseMotionListener
     }
 
     @Override
-    public void mouseDragged(MouseEvent event) {
-
-    }
+    public void mouseDragged(MouseEvent event) {}
 
     @Override
     public void mouseMoved(MouseEvent event) {
-        this.currentSelection = getGlyphSelection(event.getX(), event.getY());
+        setSelection(getGlyphSelection(event.getX(), event.getY()));
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent mouseEvent) {}
+
+    @Override
+    public void mousePressed(MouseEvent mouseEvent) {}
+
+    @Override
+    public void mouseReleased(MouseEvent mouseEvent) {}
+
+    @Override
+    public void mouseEntered(MouseEvent mouseEvent) {}
+
+    @Override
+    public void mouseExited(MouseEvent mouseEvent) {
+        setSelection(null);
+    }
+
+    private void setSelection(GlyphInfo selection) {
+        this.currentSelection = selection;
         this.glyphSelectionListener.onSelectGlyph(this.currentSelection);
         invalidate();
         repaint();
