@@ -1,0 +1,140 @@
+package org.bfg.gui.tabs.file.character;
+
+import org.bfg.generate.BitmapFont;
+import org.bfg.generate.GlyphInfo;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+
+/**
+ * Side panel that shows metadata and a preview for a glyph.
+ */
+public final class GlyphView extends JPanel {
+
+    private final JLabel labelId;
+    private final JLabel labelChar;
+    private final JLabel labelX;
+    private final JLabel labelY;
+    private final JLabel labelWidth;
+    private final JLabel labelHeight;
+    private final SubImageView subImageView;
+    private BitmapFont bitmapFont;
+    private boolean showUvCoordinates = false;
+
+    /**
+     * Builds the view with a preferred width of 250 pixels.
+     */
+    public GlyphView() {
+        setPreferredSize(new Dimension(250, 0));
+        setMinimumSize(new Dimension(0, 0));
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+        this.labelId = new JLabel("");
+        add(createRow("ID", this.labelId));
+
+        this.labelChar = new JLabel("");
+        add(createRow("Char", this.labelChar));
+
+        this.labelX = new JLabel("");
+        add(createRow("X", this.labelX));
+
+        this.labelY = new JLabel("");
+        add(createRow("Y", this.labelY));
+
+        this.labelWidth = new JLabel("");
+        add(createRow("Width", this.labelWidth));
+
+        this.labelHeight = new JLabel("");
+        add(createRow("Height", this.labelHeight));
+
+        this.subImageView = new SubImageView();
+        add(createRow(" ", this.subImageView, 3));
+
+        add(Box.createVerticalGlue());
+    }
+
+    private JPanel createRow(String label, JComponent component) {
+        return createRow(label, component, 1);
+    }
+
+    private JPanel createRow(String label, JComponent component, int heightFactor) {
+        final JPanel row = new JPanel(new BorderLayout(10, 0));
+        row.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40 * heightFactor));
+
+        final JLabel labelComponent = new JLabel(label);
+        labelComponent.setPreferredSize(new Dimension(90, labelComponent.getPreferredSize().height * heightFactor));
+
+        row.add(labelComponent, BorderLayout.WEST);
+        row.add(component, BorderLayout.CENTER);
+        return row;
+    }
+
+    /**
+     * Updates labels and preview for the given {@code selection}. If {@code selection} is {@code null}, all fields and
+     * the preview are cleared. The preview is only updated when a {@link BitmapFont} has been set via
+     * {@link #setBitmapFont(BitmapFont)}.
+     *
+     * @param selection Either the glyph to preview or null to clear the view.
+     */
+    public void setSelection(GlyphInfo selection) {
+        if (selection == null) {
+            this.labelId.setText("");
+            this.labelChar.setText("");
+            this.labelX.setText("");
+            this.labelY.setText("");
+            this.labelWidth.setText("");
+            this.labelHeight.setText("");
+            this.subImageView.resetSubImage();
+            return;
+        }
+
+        this.labelId.setText(Integer.toString(selection.charValue));
+        this.labelChar.setText(Character.toString(selection.charValue));
+
+        if (this.showUvCoordinates) {
+            this.labelX.setText(String.format("%.4f", selection.u));
+            this.labelY.setText(String.format("%.4f", selection.v));
+            this.labelWidth.setText(String.format("%.4f", selection.uWidth));
+            this.labelHeight.setText(String.format("%.4f", selection.vHeight));
+        } else {
+            this.labelX.setText(Integer.toString(selection.x));
+            this.labelY.setText(Integer.toString(selection.y));
+            this.labelWidth.setText(Integer.toString(selection.width));
+            this.labelHeight.setText(Integer.toString(selection.height));
+        }
+
+        if (this.bitmapFont != null) {
+            final int realY = this.bitmapFont.isYAxisInverted() ?
+                this.bitmapFont.getAtlasImage().getHeight() - selection.y : selection.y;
+
+            this.subImageView.setSubImage(selection.x, realY, selection.width, selection.height,
+                this.bitmapFont.getAtlasImage());
+        }
+    }
+
+    /**
+     * Sets the generated font to get the glyph preview from. This does not refresh the preview.
+     *
+     * @param bitmapFont The font used for the preview.
+     */
+    public void setBitmapFont(BitmapFont bitmapFont) {
+        this.bitmapFont = bitmapFont;
+    }
+
+    /**
+     * Set whether the glyph bounds should be shown in pixels or normalized UV coordinates. This does not refresh the
+     * preview.
+     *
+     * @param flag {@code true} to shoe UV coordinates.
+     */
+    public void setShowUvCoordinates(boolean flag) {
+        this.showUvCoordinates = flag;
+    }
+}

@@ -1,4 +1,6 @@
-out
-bitmap-font-generator.jar
+# Maven
+target/
+
+# IntelliJ IDEA
+.idea/
 *.iml
-.idea
