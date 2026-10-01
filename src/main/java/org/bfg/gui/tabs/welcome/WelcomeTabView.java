@@ -31,6 +31,8 @@ public final class WelcomeTabView extends TabView {
         public void setShowGrid(boolean flag) {}
         @Override
         public void setShowUvCoordinates(boolean flag) {}
+        @Override
+        public void onAfterOpen() {}
     };
 
     /**

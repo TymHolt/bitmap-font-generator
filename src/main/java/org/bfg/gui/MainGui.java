@@ -129,6 +129,7 @@ public final class MainGui extends JFrame {
         this.tabbedPane.addTab(title, view);
         this.tabbedPane.setSelectedComponent(view);
         setTabTitle(view, title);
+        view.getPresenter().onAfterOpen();
     }
 
     /**

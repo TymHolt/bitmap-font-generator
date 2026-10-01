@@ -92,6 +92,11 @@ public final class FileTabPresenter implements FileTabView.IFileTabPresenter {
     }
 
     @Override
+    public void onAfterOpen() {
+        updateTitle();
+    }
+
+    @Override
     public void doActionExport() {
         final ExportDialog dialog = new ExportDialog(this.guiPresenter.getGuiParent(), "Export Bitmap Font");
         dialog.setVisible(true);
