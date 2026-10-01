@@ -15,6 +15,7 @@ import java.util.Objects;
 public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
 
     private final MainGui gui;
+    private boolean showGridFlag = false, showUvCoordinatesFlag = false;
 
     /**
      * Initializes the presenter and registers it for the given {@link MainGui} instance.
@@ -38,6 +39,8 @@ public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
     public void onOpenNewFile() {
         final FileTabView view = new FileTabView();
         final FileTabPresenter presenter = new FileTabPresenter(view, this);
+        presenter.setShowGrid(this.showGridFlag);
+        presenter.setShowUvCoordinates(this.showUvCoordinatesFlag);
         view.setPresenter(presenter);
         this.gui.openTab("New", view);
     }
@@ -62,6 +65,7 @@ public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
 
     @Override
     public void onActionShowGrid(boolean state) {
+        this.showGridFlag = state;
         for (int index = 0; index < this.gui.getTabCount(); index++)
             this.gui.getTabAt(index).getPresenter().setShowGrid(state);
         this.gui.invalidate();
@@ -70,6 +74,7 @@ public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
 
     @Override
     public void onActionShowUvCoordinates(boolean state) {
+        this.showUvCoordinatesFlag = state;
         for (int index = 0; index < this.gui.getTabCount(); index++)
             this.gui.getTabAt(index).getPresenter().setShowUvCoordinates(state);
         this.gui.invalidate();

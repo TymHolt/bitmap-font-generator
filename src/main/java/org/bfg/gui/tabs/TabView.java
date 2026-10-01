@@ -30,6 +30,11 @@ public abstract class TabView extends JPanel {
          * @param flag The flag state.
          */
         void setShowUvCoordinates(boolean flag);
+
+        /**
+         * Called by the GUI after the tab was opened.
+         */
+        void onAfterOpen();
     }
 
     /**
