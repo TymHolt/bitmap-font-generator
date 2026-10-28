@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * The arguments possible via CLI.
  */
-public enum ArgumentType {
+enum ArgumentType {
 
     FONT(new String[] {"-font", "-f"}, "<name>", "The font name"),
     SIZE(new String[] {"-size", "-si"}, "<size>", "The font size"),

@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * A representation of command-line-arguments in a parsed form.
  */
-public final class CliArguments {
+final class CliArguments {
 
     private final HashMap<ArgumentType, List<String>> argumentValues = new HashMap<>();
 
@@ -55,37 +55,46 @@ public final class CliArguments {
     }
 
     /**
-     * Parse the values for the given {@link ArgumentType}. If more or less than one value are assigned to the type
-     * or if the argument cannot be parsed to the expected data type an {@link CliParseException} is thrown.
+     * Parse the values for the given {@link ArgumentType}. If more than one value is assigned to the type or if the
+     * argument cannot be parsed to the expected data type an {@link CliParseException} is thrown.
      *
      * @param  type              The type to parse the values for. Must not be {@code null}.
+     * @param  fallback          This value will be returned if the argument has no value assigned.
      * @return                   The parsed data value.
      * @throws CliParseException If the parsing fails.
      */
-    public String parseSingleStringValue(ArgumentType type) throws CliParseException {
+    public String parseSingleStringValue(ArgumentType type, String fallback) throws CliParseException {
         Objects.requireNonNull(type);
         final List<String> values = getValues(type);
+        final int valueCount = values.size();
 
-        if (values.size() != 1)
-            throw new CliParseException("Expected one value for argument " + type.name() + ", found " + values.size());
+        if (valueCount == 0)
+            return fallback;
+
+        if (valueCount > 1)
+            throw new CliParseException("Expected one value for argument " + type.name() + ", found " + valueCount);
 
         return values.getFirst();
     }
 
     /**
-     * Parse the values for the given {@link ArgumentType}. If more or less than one value are assigned to the type
-     * or if the argument cannot be parsed to the expected data type an {@link CliParseException} is thrown.
+     * Parse the values for the given {@link ArgumentType}. If more than one value is assigned to the type or if the
+     * argument cannot be parsed to the expected data type an {@link CliParseException} is thrown.
      *
      * @param  type              The type to parse the values for. Must not be {@code null}.
+     * @param  fallback          This value will be returned if the argument has no value assigned.
      * @return                   The parsed data value.
      * @throws CliParseException If the parsing fails.
      */
-    public int parseSingleIntegerValue(ArgumentType type) throws CliParseException {
+    public int parseSingleIntegerValue(ArgumentType type, int fallback) throws CliParseException {
         Objects.requireNonNull(type);
         final List<String> values = getValues(type);
         final int valueCount = values.size();
 
-        if (valueCount != 1)
+        if (valueCount == 0)
+            return fallback;
+
+        if (valueCount > 1)
             throw new CliParseException("Expected one value for argument " + type.name() + ", found " + valueCount);
 
         final String value = values.getFirst();
@@ -97,19 +106,23 @@ public final class CliArguments {
     }
 
     /**
-     * Parse the values for the given {@link ArgumentType}. If more or less than one value are assigned to the type
-     * or if the argument cannot be parsed to the expected data type an {@link CliParseException} is thrown.
+     * Parse the values for the given {@link ArgumentType}. If more than one value is assigned to the type or if the
+     * argument cannot be parsed to the expected data type an {@link CliParseException} is thrown.
      *
      * @param  type              The type to parse the values for. Must not be {@code null}.
+     * @param  fallback          This value will be returned if the argument has no value assigned.
      * @return                   The parsed data value.
      * @throws CliParseException If the parsing fails.
      */
-    public boolean parseSingleBooleanValue(ArgumentType type) throws CliParseException {
+    public boolean parseSingleBooleanValue(ArgumentType type, boolean fallback) throws CliParseException {
         Objects.requireNonNull(type);
         final List<String> values = getValues(type);
         final int valueCount = values.size();
 
-        if (valueCount != 1)
+        if (valueCount == 0)
+            return fallback;
+
+        if (valueCount > 1)
             throw new CliParseException("Expected one value for argument " + type.name() + ", found " + valueCount);
 
         final String value = values.getFirst();
