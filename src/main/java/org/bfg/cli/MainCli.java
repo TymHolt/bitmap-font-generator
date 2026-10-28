@@ -5,6 +5,7 @@ import org.bfg.generate.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
  * The handler for CLI mode.
@@ -26,6 +27,7 @@ public final class MainCli {
         final boolean antiAlias;
         final boolean invertYAxis;
         final boolean exportUV;
+        final boolean forceOverwrite;
 
         final CliArguments arguments;
         try {
@@ -39,6 +41,7 @@ public final class MainCli {
             antiAlias = arguments.parseSingleBooleanValue(ArgumentType.ANTIALIAS, false);
             invertYAxis = arguments.parseSingleBooleanValue(ArgumentType.INVERT_Y, false);
             exportUV = arguments.parseSingleBooleanValue(ArgumentType.EXPORT_UV, false);
+            forceOverwrite = arguments.parseSingleBooleanValue(ArgumentType.OVERWRITE_FORCE, false);
         } catch (CliArguments.CliParseException exception) {
             System.err.println(exception.getMessage());
             return;
@@ -75,12 +78,36 @@ public final class MainCli {
         final GlyphRange range = new GlyphRange((char) rangeBegin, (char) rangeEnd);
         final BitmapFont bitmapFont = BitmapFontGenerator.generate(font, range, antiAlias, invertYAxis);
         try {
-            // TODO Ask if overwrite
             // TODO Separate filenames for xml/png
-            Export.export(new File(outPath), new File(outPath + ".xml"), bitmapFont, exportUV);
+
+            final File imageFile = new File(outPath);
+            final File xmlFile = new File(outPath + ".xml");
+
+            if (!forceOverwrite) {
+                if (imageFile.exists() || xmlFile.exists())
+                    if (!askCliProceed("File already exists, overwrite?", false)) {
+                        System.out.println("Aborting...");
+                        return;
+                    }
+            }
+
+            Export.export(imageFile, xmlFile, bitmapFont, exportUV);
         } catch (IOException exception) {
             System.err.println("Error: " + exception.getMessage());
         }
+    }
+
+    private static boolean askCliProceed(String message, boolean fallback) {
+        System.out.print(message + " (Yes/No): ");
+        final String answer = new Scanner(System.in).nextLine().toLowerCase();
+
+        if (answer.equals("yes") || answer.equals("y"))
+            return true;
+
+        if (answer.equals("no") || answer.equals("n"))
+            return false;
+
+        return fallback;
     }
 
     private static boolean verifyMinimum(int value, int min, String name) {

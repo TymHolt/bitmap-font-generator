@@ -15,7 +15,8 @@ enum ArgumentType {
     RANGE_END(new String[] {"-end", "-e"}, "<code>", "Last char to render"),
     ANTIALIAS(new String[] {"-antialias", "-a"}, "<true/false>", "Enable anti-aliasing"),
     INVERT_Y(new String[] {"-invert-y", "-y"}, "<true/false>", "Invert Y axis of coordinates"),
-    EXPORT_UV(new String[] {"-uv"}, "<true/false>", "Export UV coordinates");
+    EXPORT_UV(new String[] {"-uv"}, "<true/false>", "Export UV coordinates"),
+    OVERWRITE_FORCE(new String[] {"-force"}, "<true/false>", "If files should be overwritten without asking");
 
     /** The forms this argument can be called. */
     private final String[] argumentForms;
