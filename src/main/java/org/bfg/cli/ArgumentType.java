@@ -8,11 +8,14 @@ import java.util.Objects;
 enum ArgumentType {
 
     FONT(new String[] {"-font", "-f"}, "<name>", "The font name"),
-    SIZE(new String[] {"-size", "-si"}, "<size>", "The font size"),
+    SIZE(new String[] {"-size", "-s"}, "<size>", "The font size"),
     OUT(new String[] {"-out",  "-o"}, "<file-path>", "The output file"),
-    STYLE(new String[] {"-style", "-st"}, "<plain/italic/bold>", "The font style"),
-    COUNT(new String[] {"-count", "-c"}, "<count>", "Amount of chars to render"),
-    ANTIALIAS(new String[] {"-antialias", "-aa"}, "<true/false>", "Enable anti-aliasing");
+    STYLE(new String[] {"-style", "-t"}, "<plain/italic/bold>", "The font style"),
+    RANGE_BEGIN(new String[] {"-begin", "-b"}, "<code>", "First char to render"),
+    RANGE_END(new String[] {"-end", "-e"}, "<code>", "Last char to render"),
+    ANTIALIAS(new String[] {"-antialias", "-a"}, "<true/false>", "Enable anti-aliasing"),
+    INVERT_Y(new String[] {"-invert-y", "-y"}, "<true/false>", "Invert Y axis of coordinates"),
+    EXPORT_UV(new String[] {"-uv"}, "<true/false>", "Export UV coordinates");
 
     /** The forms this argument can be called. */
     private final String[] argumentForms;
