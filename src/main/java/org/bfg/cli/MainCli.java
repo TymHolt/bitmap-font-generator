@@ -24,6 +24,7 @@ public final class MainCli {
         final int rangeBegin;
         final int rangeEnd;
         final String outPath;
+        final String outXmlPath;
         final boolean antiAlias;
         final boolean invertYAxis;
         final boolean exportUV;
@@ -38,6 +39,7 @@ public final class MainCli {
             rangeBegin = arguments.parseSingleIntegerValue(ArgumentType.RANGE_BEGIN, 0);
             rangeEnd = arguments.parseSingleIntegerValue(ArgumentType.RANGE_END, 255);
             outPath = arguments.parseSingleStringValue(ArgumentType.OUT, null);
+            outXmlPath = arguments.parseSingleStringValue(ArgumentType.OUT_XML, null);
             antiAlias = arguments.parseSingleBooleanValue(ArgumentType.ANTIALIAS, false);
             invertYAxis = arguments.parseSingleBooleanValue(ArgumentType.INVERT_Y, false);
             exportUV = arguments.parseSingleBooleanValue(ArgumentType.EXPORT_UV, false);
@@ -78,10 +80,8 @@ public final class MainCli {
         final GlyphRange range = new GlyphRange((char) rangeBegin, (char) rangeEnd);
         final BitmapFont bitmapFont = BitmapFontGenerator.generate(font, range, antiAlias, invertYAxis);
         try {
-            // TODO Separate filenames for xml/png
-
             final File imageFile = new File(outPath);
-            final File xmlFile = new File(outPath + ".xml");
+            final File xmlFile = new File(outXmlPath != null ? outXmlPath : outPath + ".xml");
 
             if (!forceOverwrite) {
                 if (imageFile.exists() || xmlFile.exists())

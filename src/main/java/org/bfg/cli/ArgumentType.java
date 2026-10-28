@@ -10,6 +10,7 @@ enum ArgumentType {
     FONT(new String[] {"-font", "-f"}, "<name>", "The font name"),
     SIZE(new String[] {"-size", "-s"}, "<size>", "The font size"),
     OUT(new String[] {"-out",  "-o"}, "<file-path>", "The output file"),
+    OUT_XML(new String[] {"-out-xml",  "-x"}, "<file-path>", "Explicit path for the metadata export"),
     STYLE(new String[] {"-style", "-t"}, "<plain/italic/bold>", "The font style"),
     RANGE_BEGIN(new String[] {"-begin", "-b"}, "<code>", "First char to render"),
     RANGE_END(new String[] {"-end", "-e"}, "<code>", "Last char to render"),
