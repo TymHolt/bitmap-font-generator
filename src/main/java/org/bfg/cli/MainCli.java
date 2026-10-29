@@ -49,6 +49,11 @@ public final class MainCli {
             return;
         }
 
+        if (arguments.isArgumentTypePresent(ArgumentType.HELP)) {
+            System.out.println(ArgumentType.createHelpMenuMessage());
+            return;
+        }
+
         if (outPath == null) {
             System.err.println("No file path for export given");
             return;

@@ -17,20 +17,21 @@ enum ArgumentType {
     ANTIALIAS(new String[] {"-antialias", "-a"}, "<true/false>", "Enable anti-aliasing"),
     INVERT_Y(new String[] {"-invert-y", "-y"}, "<true/false>", "Invert Y axis of coordinates"),
     EXPORT_UV(new String[] {"-uv"}, "<true/false>", "Export UV coordinates"),
-    OVERWRITE_FORCE(new String[] {"-force"}, "<true/false>", "If files should be overwritten without asking");
+    OVERWRITE_FORCE(new String[] {"-force"}, "<true/false>", "If files should be overwritten without asking"),
+    HELP(new String[] {"-help", "-usage"}, "", "Show usage information");
 
     /** The forms this argument can be called. */
     private final String[] argumentForms;
 
     /** The format of the values. */
-    private final String valueformat;
+    private final String valueFormat;
 
     /** A description for the help documentation. */
     private final String description;
 
     ArgumentType(String[] argumentForms, String valueFormat, String description) {
         this.argumentForms = argumentForms;
-        this.valueformat = valueFormat;
+        this.valueFormat = valueFormat;
         this.description = description;
     }
 
@@ -49,5 +50,47 @@ enum ArgumentType {
                     return type;
 
         return null;
+    }
+
+    /**
+     * Builds a help or usage message containing all CLI options.
+     *
+     * @return The CLI options that are possible.
+     */
+    public static String createHelpMenuMessage() {
+        int formMax = 0;
+        int valueMax = 0;
+
+        for (ArgumentType type : ArgumentType.values()) {
+            for (String form : type.argumentForms)
+                formMax = Math.max(formMax, form.length());
+
+            valueMax = Math.max(valueMax, type.valueFormat.length());
+        }
+
+        final StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Usage: java -jar <jar-name> <...>\n\n");
+
+        for (ArgumentType type : ArgumentType.values()) {
+            for (String form : type.argumentForms) {
+                stringBuilder.append(form);
+
+                for (int count = 0; count < formMax - form.length() + 1; count++)
+                    stringBuilder.append(' ');
+
+                stringBuilder.append(type.valueFormat);
+
+                for (int count = 0; count < valueMax - type.valueFormat.length() + 1; count++)
+                    stringBuilder.append(' ');
+
+                stringBuilder.append(type.description);
+
+                stringBuilder.append('\n');
+            }
+
+            stringBuilder.append('\n');
+        }
+
+        return stringBuilder.toString();
     }
 }

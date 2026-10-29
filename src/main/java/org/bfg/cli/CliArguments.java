@@ -134,6 +134,17 @@ final class CliArguments {
     }
 
     /**
+     * Check if the given {@link ArgumentType} is present in the parsed arguments.
+     *
+     * @param  type The type to check for. Must not be {@code null}.
+     * @return {@code true} if the argument type was parsed.
+     */
+    public boolean isArgumentTypePresent(ArgumentType type) {
+        Objects.requireNonNull(type);
+        return this.argumentValues.containsKey(type);
+    }
+
+    /**
      * Parse raw CLI arguments into a {@link CliArguments} instance.
      *
      * @param  args              The raw CLI arguments.
