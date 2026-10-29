@@ -1,0 +1,83 @@
+package org.bfg.gui;
+
+import org.bfg.gui.tabs.TabView;
+import org.bfg.gui.tabs.file.FileTabPresenter;
+import org.bfg.gui.tabs.file.FileTabView;
+import org.bfg.gui.tabs.welcome.WelcomeTabPresenter;
+import org.bfg.gui.tabs.welcome.WelcomeTabView;
+
+import javax.swing.JFrame;
+import java.util.Objects;
+
+/**
+ * The presenter implementation for the {@link MainGui}.
+ */
+public final class MainGuiPresenter implements MainGui.IMainGuiPresenter {
+
+    private final MainGui gui;
+    private boolean showGridFlag = false, showUvCoordinatesFlag = false;
+
+    /**
+     * Initializes the presenter and registers it for the given {@link MainGui} instance.
+     *
+     * @param gui The GUI instance, must not be {@link null}.
+     */
+    public MainGuiPresenter(MainGui gui) {
+        Objects.requireNonNull(gui);
+        this.gui = gui;
+        openWelcomeView();
+    }
+
+    private void openWelcomeView() {
+        final WelcomeTabView welcomeTabView = new WelcomeTabView();
+        final WelcomeTabPresenter presenter = new WelcomeTabPresenter(welcomeTabView, this);
+        welcomeTabView.setPresenter(presenter);
+        this.gui.openTab("Welcome", welcomeTabView);
+    }
+
+    @Override
+    public void onOpenNewFile() {
+        final FileTabView view = new FileTabView();
+        final FileTabPresenter presenter = new FileTabPresenter(view, this);
+        presenter.setShowGrid(this.showGridFlag);
+        presenter.setShowUvCoordinates(this.showUvCoordinatesFlag);
+        view.setPresenter(presenter);
+        this.gui.openTab("New", view);
+    }
+
+    @Override
+    public void onRenameTab(TabView view, String title) {
+        this.gui.setTabTitle(view, title);
+    }
+
+    @Override
+    public void onTabClose(TabView view) {
+        this.gui.closeTab(view);
+
+        if (this.gui.getTabCount() == 0)
+            openWelcomeView();
+    }
+
+    @Override
+    public JFrame getGuiParent() {
+        return this.gui;
+    }
+
+    @Override
+    public void onActionShowGrid(boolean state) {
+        this.showGridFlag = state;
+        for (int index = 0; index < this.gui.getTabCount(); index++)
+            this.gui.getTabAt(index).getPresenter().setShowGrid(state);
+        this.gui.invalidate();
+        this.gui.repaint();
+    }
+
+    @Override
+    public void onActionShowUvCoordinates(boolean state) {
+        this.showUvCoordinatesFlag = state;
+        for (int index = 0; index < this.gui.getTabCount(); index++)
+            this.gui.getTabAt(index).getPresenter().setShowUvCoordinates(state);
+        this.gui.invalidate();
+        this.gui.repaint();
+    }
+}
