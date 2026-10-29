@@ -1,22 +1,28 @@
 # Bitmap Font Generator
 This tool can generate bitmap fonts from TrueType fonts installed on your system. Style and size
 can be adjusted, and you can preview your generated font before exporting it. In addition to the
-image exported as .png, you will have a .xml file containing all metadata. Either start it without
-arguments to run with a GUI or use command line arguments to run the generation instantly.
+image exported as ```.png```, you will have a ```.xml``` file containing all metadata. Either start it without
+arguments to run with a **GUI** or use command line arguments to run the generation instantly as **CLI**.
 
 ### GUI
 ![Screenshot](/img/screenshot.jpg?raw=true "Screenshot")
 
 ### CLI
->java -jar \<path-to-jar\> -font \<name\> -size \<size\> -out \<file-path\>
+>java -jar \<path-to-jar\> -out \<file-path\>
 
 **All options:**
-- font (-f) <name> - *The font name*
-- size (-si) <size> - *The font size*
-- out (-o) <file-path> - *The output file*
-- style (-st) <plain/italic/bold> - *The font style*
-- count (-c) <count> - *Amount of chars to render*
-- antialias (-aa) <true/false> - *Enable anti-aliasing*
+- ```-font (-f) <name>``` The font name
+- ```-size (-s) <size>``` The font size
+- ```-out -o <file-path>``` The output file
+- ```-out-xml (-x) <file-path>``` Explicit path for the metadata export
+- ```-style (-t) <plain/italic/bold>``` The font style
+- ```-begin (-b) <code>``` First char to render
+- ```-end (-e) <code>``` Last char to render
+- ```-antialias (-a) <true/false>``` Enable anti-aliasing
+- ```-invert-y (-y)<true/false>``` Invert Y axis of coordinates
+- ```-uv <true/false>``` Export UV coordinates
+- ```-force <true/false>``` If files should be overwritten without asking
+- ```-help (-usage)``` Show usage information
 
 ### XML Metadata
 
@@ -35,7 +41,6 @@ arguments to run with a GUI or use command line arguments to run the generation 
     <...>
 </font>
 ```
-
 
 ### Build
 This project uses **Maven** as build tool and targets **Java 21**. Run
